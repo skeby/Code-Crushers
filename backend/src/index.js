@@ -34,10 +34,10 @@ app.use(express.urlencoded({extended: true}));
 const PORT = parseInt((process.env.PORT || '4000'), 10)
 
 //production path
-// app.use(express.static(path.join(__dirname, '../../frontend/dist')))
-// app.get('*', (req, res)=>
-//     res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'))
-// )
+app.use(express.static(path.join(__dirname, '../../frontend/dist')))
+app.get('*', (req, res)=>
+    res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'))
+)
 
 app.listen(PORT, ()=>{
     console.log(`listening on port ${PORT}...`)
