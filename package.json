@@ -2,12 +2,14 @@
   "name": "code-crushers",
   "version": "1.0.0",
   "description": "",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"npm run dev --prefix backend\"  \"npm run dev --prefix frontend\" ",
-    "build": "cd backend && npm --force install  && npm run build  && cd ../frontend && npm install && npm run build",
-    "start": " node backend/build/index.js"
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "build": "cd backend && npm --force install && npm run build && cd ../frontend && npm install && npm run build",
+    "start": "node backend/build/index.js"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
