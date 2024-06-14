@@ -1,13 +1,8 @@
-function App() {
-  return (
-    <>
-     <h2 className='text-red-300 text-2xl ' >hello world
-      <p>
-        from the frontend-david branch
-      </p>
-     </h2>
-    </>
-  );
-}
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes";
+
+const App = () => {
+  return <RouterProvider router={router} />;
+};
 
 export default App;
