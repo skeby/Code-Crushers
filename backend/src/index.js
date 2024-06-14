@@ -7,7 +7,7 @@ import path from "path";
 
 const app = express();
 
-const MONGODB_URI = process.env.MONGO_URI || "mongodb:/localhost/crushers";
+const MONGODB_URI = process.env.MONGODB_URI || `mongodb+srv://agbakwuruoluchi29:2mNJfvNczG21k197@cluster0.qv7kibt.mongodb.net/ExpenseTracker`
 
 const __dirname = path.resolve();
 
@@ -42,5 +42,4 @@ app.get("*", (req, res) =>
 
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}...`);
-  
 });
