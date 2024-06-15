@@ -32,7 +32,6 @@ const NavBar = () => {
     // const [role, setRole] = useState("");
 
     //testing
-
     const image = "img"
     const firstName = "John"
     const lastName = "doey"
