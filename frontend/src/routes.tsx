@@ -31,6 +31,7 @@ export const router = createBrowserRouter([
           <StudentOverview />
         </ProtectedRoute>)
       },
+      
     ],
   },
 ]);

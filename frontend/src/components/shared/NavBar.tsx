@@ -13,12 +13,12 @@ import { Link, useLocation } from "react-router-dom";
 import { BsLayoutSidebar } from "react-icons/bs";
 import { useState } from "react";
 
-interface User {
-    registrationNumber: string;
-    firstName: string;
-    lastName: string;
-    role: string;
-  }
+// interface User {
+//     registrationNumber: string;
+//     firstName: string;
+//     lastName: string;
+//     role: string;
+//   }
 
 const NavBar = () => {
 
@@ -31,6 +31,7 @@ const NavBar = () => {
     // const [lastName, setLastName] = useState("");
     // const [role, setRole] = useState("");
 
+    //testing
     const [image, setImage] = useState("img");
     const [firstName, setFirstName] = useState("Johnny");
     const [lastName, setLastName] = useState("Danny");
