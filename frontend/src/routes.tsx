@@ -6,20 +6,30 @@ import TestConstruct from "./pages/teacher-pages/TestConstruct";
 import StudentOverview from "./pages/teacher-pages/StudentOverview";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 
-
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <Layout>
+    element: (<Layout />),
+    children: [
+      {
+        path: "/", element: (
         <ProtectedRoute>
           <Dashboard />
-        </ProtectedRoute>
-      </Layout>
-    ),
+        </ProtectedRoute>)
+      },
+      { path: "login", element: <Login /> },
+      {
+        path: "setup-test", element: (
+        <ProtectedRoute>
+          <TestConstruct />
+        </ProtectedRoute>)
+      },
+      {
+        path: "student-overview", element: (
+        <ProtectedRoute>
+          <StudentOverview />
+        </ProtectedRoute>)
+      },
+    ],
   },
-  { path: "/login", element: <Login /> },
-  { path: "/setup-test", element: <TestConstruct /> },
-  { path: "/student-overview", element: <StudentOverview /> },
 ]);
-
