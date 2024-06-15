@@ -4,10 +4,21 @@ import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import path from "path";
+import router from "../src/Routes/Routes.js";
 
 const app = express();
+app.use(express.json());
+app.use(
+  cors({
+    credentials: true,
+    origin: true,
+  })
+);
+app.use(express.urlencoded({ extended: true }));
 
-const MONGODB_URI = process.env.MONGODB_URI || `mongodb+srv://agbakwuruoluchi29:2mNJfvNczG21k197@cluster0.qv7kibt.mongodb.net/ExpenseTracker`
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  `mongodb+srv://agbakwuruoluchi29:2mNJfvNczG21k197@cluster0.qv7kibt.mongodb.net/ExpenseTracker`;
 
 const __dirname = path.resolve();
 
@@ -22,15 +33,7 @@ mongoose
     console.log("error occurred during connection :(");
   });
 
-app.use(
-  cors({
-    credentials: true,
-    origin: true,
-  })
-);
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use("/api/v1/user", router);
 
 const PORT = parseInt(process.env.PORT || "4000", 10);
 
