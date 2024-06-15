@@ -11,7 +11,7 @@ import {
 import { Button } from "../ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { BsLayoutSidebar } from "react-icons/bs";
-import { useState } from "react";
+// import { useState } from "react";
 
 // interface User {
 //     registrationNumber: string;
@@ -32,10 +32,11 @@ const NavBar = () => {
     // const [role, setRole] = useState("");
 
     //testing
-    const [image, setImage] = useState("img");
-    const [firstName, setFirstName] = useState("Johnny");
-    const [lastName, setLastName] = useState("Danny");
-    const [role, setRole] = useState("admin");
+
+    const image = "img"
+    const firstName = "John"
+    const lastName = "doey"
+    const role = "admin"
 
 
 
