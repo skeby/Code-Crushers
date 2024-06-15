@@ -5,7 +5,7 @@ import { AUTH_TOKEN, USER } from "@/static";
 interface AuthState {
   user: User<UserType> | null;
   isAuthenticated: boolean;
-  hasOnboarded: boolean;
+  // hasOnboarded: boolean;
   error: string | null;
 }
 
@@ -14,7 +14,30 @@ const user = JSON.parse(localStorage.getItem(USER) || "null");
 const initialState: AuthState = {
   user: user,
   isAuthenticated: user ? true : false,
-  hasOnboarded: false,
+
+  // Sample teacher user
+  // user: {
+  //   id: 1,
+  //   email: "akinsanyaadeyinka4166@gmail.com",
+  //   firstName: "Adeyinka",
+  //   lastName: "Akinsanya",
+  //   status: "free",
+  //   type: "Teacher",
+  //   registrationNumber: "21CG029820",
+  // },
+
+  // Sample student user
+  // user: {
+  //   id: 1,
+  //   email: "akinsanyaadeyinka4166@gmail.com",
+  //   firstName: "Adeyinka",
+  //   lastName: "Akinsanya",
+  //   status: "free",
+  //   type: "Student",
+  //   registrationNumber: "21CG029820",
+  // },
+  // isAuthenticated: true,
+  // hasOnboarded: false,
   error: null,
 };
 

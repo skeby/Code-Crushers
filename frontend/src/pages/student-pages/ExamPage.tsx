@@ -1,11 +1,5 @@
-
-
 const ExamPage = () => {
-  return (
-    <div>
-      exam page
-    </div>
-  )
-}
+  return <div>exam page</div>;
+};
 
-export default ExamPage
+export default ExamPage;

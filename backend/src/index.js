@@ -4,6 +4,7 @@ import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import path from "path";
+import router from "./routes.js";
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(
   })
 );
 
+app.use("/api/v1", router);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

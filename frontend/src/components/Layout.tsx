@@ -1,20 +1,19 @@
-import { Outlet } from 'react-router-dom';
-import { Toaster } from "@/components/ui/sonner"
-import NavBar from './shared/NavBar';
+import { Outlet } from "react-router-dom";
+import { Toaster } from "@/components/ui/sonner";
+import NavBar from "./shared/NavBar";
+import { APP_NAME } from "@/static";
 
 const Layout = () => {
   return (
-    <div>
-      <header>
-        <div>
-          <NavBar />
-        </div>
+    <div className="min-h-screen relative flex flex-col">
+      <header className="sticky top-0">
+        <NavBar />
       </header>
-      <main>
+      <main className="flex-grow lg:p-12 p-5">
         <Outlet />
       </main>
-      <footer>
-        <p>© 2024 App. All rights reserved.</p>
+      <footer className="sticky bottom-0 lg:px-12 py-2 p-5 border-t border-white">
+        <p>© 2024 {APP_NAME}. All rights reserved.</p>
       </footer>
       <Toaster />
     </div>
