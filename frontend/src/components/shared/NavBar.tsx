@@ -32,10 +32,10 @@ const NavBar = () => {
     // const [role, setRole] = useState("");
 
     //testing
-    const image = "img"
-    const firstName = "John"
-    const lastName = "doey"
-    const role = "admin"
+    // const image = "img"
+    // const firstName = "John"
+    // const lastName = "doey"
+    // const role = "admin"
 
 
 
@@ -104,7 +104,7 @@ const NavBar = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center p-3 xl:mr-10 " >
+                {/* <div className="flex items-center p-3 xl:mr-10 " >
                     <div className=" mr-2 rounded-full border p-3 " >
                         {image}
                     </div>
@@ -112,7 +112,7 @@ const NavBar = () => {
                         <h2 className="text-semibold opacity-80" > {`${lastName} ${firstName}`} </h2>
                         <p>{role}</p>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     )
