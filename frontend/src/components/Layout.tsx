@@ -1,11 +1,14 @@
 import { Outlet } from 'react-router-dom';
 import { Toaster } from "@/components/ui/sonner"
+import NavBar from './shared/NavBar';
 
 const Layout = () => {
   return (
     <div>
       <header>
-        <h1>App nav</h1>
+        <div>
+          <NavBar />
+        </div>
       </header>
       <main>
         <Outlet />
