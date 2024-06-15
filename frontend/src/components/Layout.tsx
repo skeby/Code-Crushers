@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import { Toaster } from "@/components/ui/sonner"
 
 const Layout = () => {
   return (
@@ -12,6 +13,7 @@ const Layout = () => {
       <footer>
         <p>© 2024 App. All rights reserved.</p>
       </footer>
+      <Toaster />
     </div>
   );
 };
