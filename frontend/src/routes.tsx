@@ -22,7 +22,8 @@ export const router = createBrowserRouter([
         path: "setup-test", element: (
         <ProtectedRoute>
           <TestConstruct />
-        </ProtectedRoute>)
+        </ProtectedRoute>
+        )
       },
       {
         path: "student-overview", element: (
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
           <StudentOverview />
         </ProtectedRoute>)
       },
+      
     ],
   },
 ]);

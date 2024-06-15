@@ -7,8 +7,11 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  // const { isAuthenticated } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
+
+  //testing purposes
+  const isAuthenticated = true;
 
   useEffect(() => {
     if (!isAuthenticated) {
