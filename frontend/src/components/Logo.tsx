@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 
-const Logo = () => {
+interface Props {
+  className?: string;
+}
+const Logo = ({ className }: Props) => {
   return (
-    <Link to={"/"} className="text-2xl">
+    <Link to={"/"} className={className ?? "text-sm sm:text-2xl"}>
       Logo
     </Link>
   );
