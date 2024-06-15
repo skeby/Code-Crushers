@@ -4,7 +4,9 @@ import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import path from "path";
-import router from "../src/Routes/Routes.js";
+import router from "./Routes/TeacherRoutes.js";
+import Questionrouter from "./Routes/QuestionsRoute.js";
+import AnswerRouter from "./Routes/ExamRoute.js";
 
 const app = express();
 app.use(express.json());
@@ -18,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const MONGODB_URI =
   process.env.MONGODB_URI ||
-  `mongodb+srv://agbakwuruoluchi29:2mNJfvNczG21k197@cluster0.qv7kibt.mongodb.net/ExpenseTracker`;
+  `mongodb+srv://agbakwuruoluchi29:2mNJfvNczG21k197@cluster0.qv7kibt.mongodb.net/ExamManagement`;
 
 const __dirname = path.resolve();
 
@@ -33,7 +35,7 @@ mongoose
     console.log("error occurred during connection :(");
   });
 
-app.use("/api/v1/user", router);
+app.use("/api/v1/user", router, Questionrouter, AnswerRouter);
 
 const PORT = parseInt(process.env.PORT || "4000", 10);
 
