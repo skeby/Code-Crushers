@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 
-const Logo = () => {
-  return <Link to={"/"}>Logo</Link>;
+interface Props {
+  className?: string;
+}
+const Logo = ({ className }: Props) => {
+  return (
+    <Link to={"/"} className={className ?? "text-sm sm:text-2xl"}>
+      Logo
+    </Link>
+  );
 };
 
 export default Logo;

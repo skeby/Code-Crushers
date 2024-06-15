@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from "react";
-// import { useAppSelector } from "@/state/store";
+import { useAppSelector } from "@/state/store";
 import { useNavigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
@@ -7,11 +7,11 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  // const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
-  //testing purposes
-  const isAuthenticated = true;
+  //testing purposes //Note: Do this from redux authSlice instead, line 17
+  // const isAuthenticated = true;
 
   useEffect(() => {
     if (!isAuthenticated) {

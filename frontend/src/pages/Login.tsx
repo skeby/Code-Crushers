@@ -27,8 +27,10 @@ import { setUser } from "@/state/slices/authSlice";
 import { User } from "@/types";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import useAuthenticationStatus from "@/hooks/useAuthenticationStatus";
 
 const Login = () => {
+  useAuthenticationStatus({ pageType: "public" });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { toast } = useToast();

@@ -9,8 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
-
 interface Student {
   matricNumber: string;
   firstName: string;
@@ -22,7 +20,7 @@ interface Student {
 }
 
 // Dummy student data
-const students:Student[] = [
+const students: Student[] = [
   {
     matricNumber: "2021001",
     firstName: "John",
@@ -53,12 +51,13 @@ const students:Student[] = [
 ];
 
 const StudentOverview = () => {
-  const totalScoreNumber = students.reduce((acc, student) => acc + student.scoreNumber, 0);
+  const totalScoreNumber = students.reduce(
+    (acc, student) => acc + student.scoreNumber,
+    0
+  );
   const totalScorePercentage = totalScoreNumber / students.length;
   // const [loading, setLoading] = useState(false);
   // const [students, setStudents] = useState<Student[]>([]);
-
-
 
   //student data retrieving simulation
 
@@ -67,7 +66,7 @@ const StudentOverview = () => {
   //     try {
   //       setLoading(true);
   //       const response = await axios.get<Student[]>('https://api.example.com/students');
-        
+
   //       if (Array.isArray(response.data)) {
   //         setStudents(response.data);
   //       } else {
@@ -84,10 +83,9 @@ const StudentOverview = () => {
   //   fetchStudents();
   // }, []);
 
-
   return (
     <div>
-      <div className="p-5">
+      <div className="">
         <Table>
           <TableCaption>Students Performance Overview</TableCaption>
           <TableHeader>
@@ -112,7 +110,9 @@ const StudentOverview = () => {
                 <TableCell>{student.examStartTime}</TableCell>
                 <TableCell>{student.examEndTime}</TableCell>
                 <TableCell>{student.scoreNumber}</TableCell>
-                <TableCell>{(student.scoreNumber / 100 * 100).toFixed(2)}%</TableCell>
+                <TableCell>
+                  {((student.scoreNumber / 100) * 100).toFixed(2)}%
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

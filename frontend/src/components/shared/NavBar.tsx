@@ -1,121 +1,94 @@
-// import { useState } from "react"
-import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet"
 import { Button } from "../ui/button";
-import { Link, useLocation } from "react-router-dom";
-import { BsLayoutSidebar } from "react-icons/bs";
-// import { useState } from "react";
-
-// interface User {
-//     registrationNumber: string;
-//     firstName: string;
-//     lastName: string;
-//     role: string;
-//   }
+import { NavLink } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "@/state/store";
+import { studentPages, teacherPages } from "@/static";
+import Logo from "../Logo";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
+} from "@radix-ui/react-navigation-menu";
+import { navigationMenuTriggerStyle } from "../ui/navigation-menu";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { clearUser } from "@/state/slices/authSlice";
+import { ModeToggle } from "../ui/mode-toggle";
 
 const NavBar = () => {
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
 
-    const location = useLocation();
-    const isLoginRoute = location.pathname === "/login";
+  const isStudent = user?.type === "Student";
 
+  const handleLogout = () => {
+    dispatch(clearUser());
+  };
 
-    // const [image, setImage] = useState("");
-    // const [firstName, setFirstName] = useState("");
-    // const [lastName, setLastName] = useState("");
-    // const [role, setRole] = useState("");
-
-    //testing
-    // const image = "img"
-    // const firstName = "John"
-    // const lastName = "doey"
-    // const role = "admin"
-
-
-
-    //fetch account users details
-
-    // useEffect(() => {
-    //   const fetchStudents = async () => {
-    //     try {
-    //       setLoading(true);
-    //       const response = await axios.get<user[]>('https://api.example.com/students');
-
-
-    // setImage("dummy image link");
-    // setFirstName(response.data.firstName);
-    // setLastName(response.data.lastName);
-     // setRole(response.data.role);
-
-    //       setLoading(false);
-    //     } catch (error) {
-    //       console.error('Error fetching student data:', error);
-    //       setLoading(false);
-    //     }
-    //   };
-
-    //   fetchStudents();
-    // }, []);
-
-
-    return (
-        <div>
-            <div className="flex items-center justify-between " >
-                <div className="flex p-3 items-center ">
-                    {!isLoginRoute && (
-                        <Sheet>
-                            <SheetTrigger><BsLayoutSidebar size={25} /></SheetTrigger>
-                            <SheetContent side={"left"}>
-                                <SheetHeader>
-                                    <SheetTitle>
-                                        <Link to="/" >
-                                        app name here
-                                        </Link>
-                                        </SheetTitle>
-                                    <SheetDescription>
-                                        This action cannot be undone.
-                                    </SheetDescription>
-                                </SheetHeader>
-                                <div className="flex flex-col py-5">
-                                    <SheetClose className="mb-4" asChild>
-                                        <Link to="/setup-test">
-                                            <Button>Setup Question</Button>
-                                        </Link>
-                                    </SheetClose>
-                                    <SheetClose asChild>
-                                        <Link to="/student-overview">
-                                            <Button>Student Overview</Button>
-                                        </Link>
-                                    </SheetClose>
-                                </div>
-                            </SheetContent>
-                        </Sheet>
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row lg:px-12 px-5 py-2 items-center justify-between w-full border-b dark:border-secondary border-primary">
+        <Logo className="order-1 sm:order-none w-full sm:w-auto mb-4 sm:mb-0" />
+        <div className="flex order-3 gap-x-1 sm:gap-x-10 sm:order-none justify-between items-center sm:w-auto w-full">
+          <NavigationMenu>
+            <NavigationMenuList className="flex items-center sm:gap-x-2 gap-x-1">
+              {(isStudent ? studentPages : teacherPages).map((page, i) => (
+                <NavigationMenuItem key={i}>
+                  <NavLink to={page.path}>
+                    {({ isActive }) => (
+                      <div
+                        className={`${navigationMenuTriggerStyle()}${
+                          isActive
+                            ? " dark:bg-primary bg-primary dark:text-secondary text-secondary"
+                            : " bg-transparent"
+                        }`}
+                      >
+                        {page.name}
+                      </div>
                     )}
-                    <div className="p-3">
-                        <Link className=" text-3xl font-semibold " to="/">
-                        Navbar here
-                        </Link>
-                    </div>
+                  </NavLink>
+                </NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
+          <div className="flex items-center justify-center gap-x-2">
+            <ModeToggle />
+            <Popover>
+              <PopoverTrigger>
+                <Avatar className="size-8 sm:size-9">
+                  <AvatarImage
+                    src="https://github.com/skeby.png"
+                    alt="@skeby"
+                  />
+                  <AvatarFallback className="font-medium">
+                    {user?.firstName[0].concat(user?.lastName[0])}
+                  </AvatarFallback>
+                </Avatar>
+              </PopoverTrigger>
+              <PopoverContent className="w-60" align="end">
+                <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium leading-none">
+                      {user?.firstName} {user?.lastName}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      {user?.type}
+                    </p>
+                  </div>
+                  <Button onClick={() => handleLogout()} className="h-8">
+                    Logout
+                  </Button>
                 </div>
-
-                {/* <div className="flex items-center p-3 xl:mr-10 " >
-                    <div className=" mr-2 rounded-full border p-3 " >
-                        {image}
-                    </div>
-                    <div>
-                        <h2 className="text-semibold opacity-80" > {`${lastName} ${firstName}`} </h2>
-                        <p>{role}</p>
-                    </div>
-                </div> */}
-            </div>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
-    )
-}
+      </div>
+    </div>
+  );
+};
 
-export default NavBar
+export default NavBar;
