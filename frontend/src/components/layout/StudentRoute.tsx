@@ -14,7 +14,7 @@ const StudentRoute = ({ children }: StudentRouteProps) => {
 
   useEffect(() => {
     if (!isStudent) {
-      navigate("/login", { replace: true });
+      navigate("/", { replace: true });
     }
   }, [navigate, isStudent]);
 

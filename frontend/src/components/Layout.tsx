@@ -18,7 +18,7 @@ const Layout = () => {
             © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
           </p>
         </footer>
-        <Toaster />
+        <Toaster position="top-right" />
       </div>
     </div>
   );
