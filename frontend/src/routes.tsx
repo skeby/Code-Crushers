@@ -15,55 +15,47 @@ export const router = createBrowserRouter([
   { path: "login", element: <Login />, errorElement: <ErrorPage /> },
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
         path: "/",
-        element: (
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        ),
+        element: <Dashboard />,
       },
       {
         path: "teacher/setup-test",
         element: (
-          <ProtectedRoute>
-            <TeacherRoute>
-              <TestConstruct />
-            </TeacherRoute>
-          </ProtectedRoute>
+          <TeacherRoute>
+            <TestConstruct />
+          </TeacherRoute>
         ),
       },
       {
         path: "teacher/student-overview",
         element: (
-          <ProtectedRoute>
-            <TeacherRoute>
-              <StudentOverview />
-            </TeacherRoute>
-          </ProtectedRoute>
+          <TeacherRoute>
+            <StudentOverview />
+          </TeacherRoute>
         ),
       },
       {
         path: "student/exam",
         element: (
-          <ProtectedRoute>
-            <StudentRoute>
-              <ExamPage />
-            </StudentRoute>
-          </ProtectedRoute>
+          <StudentRoute>
+            <ExamPage />
+          </StudentRoute>
         ),
       },
       {
         path: "student/result",
         element: (
-          <ProtectedRoute>
-            <StudentRoute>
-              <ResultPage />
-            </StudentRoute>
-          </ProtectedRoute>
+          <StudentRoute>
+            <ResultPage />
+          </StudentRoute>
         ),
       },
     ],

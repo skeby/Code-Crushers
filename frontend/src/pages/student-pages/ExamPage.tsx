@@ -79,6 +79,7 @@ const ExamPage = () => {
               toast({
                 title: "Time's up!",
                 description: "The exam has ended.",
+                duration: 3000,
               });
               handleSubmit();
             }}
@@ -96,6 +97,7 @@ const ExamPage = () => {
               toast({
                 title: "Exam Started",
                 description: "You can now start answering the questions.",
+                duration: 3000,
               });
             }}
           >

@@ -17,10 +17,15 @@ import {
 } from "@/components/ui/popover";
 import { clearUser } from "@/state/slices/authSlice";
 import { ModeToggle } from "../ui/mode-toggle";
+import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+import { useMediaQuery } from "usehooks-ts";
+import { useState } from "react";
 
 const NavBar = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const isMobile = useMediaQuery("(max-width: 640px)");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const isStudent = user?.type === "Student";
 
@@ -30,17 +35,17 @@ const NavBar = () => {
 
   return (
     <div className="flex items-center justify-between">
-      <div className="flex flex-col sm:flex-row lg:px-12 px-5 py-2 items-center justify-between w-full border-b dark:border-secondary border-primary">
-        <Logo className="order-1 sm:order-none w-full sm:w-auto mb-4 sm:mb-0" />
-        <div className="flex order-3 gap-x-1 sm:gap-x-10 sm:order-none justify-between items-center sm:w-auto w-full">
+      <div className="flex flex-row lg:px-12 px-5 py-2 items-center justify-between w-full border-b dark:border-secondary border-primary">
+        <Logo />
+        {(isMenuOpen || !isMobile) && (
           <NavigationMenu>
-            <NavigationMenuList className="flex items-center sm:gap-x-2 gap-x-1">
+            <NavigationMenuList className="flex items-center sm:gap-x-2 gap-x-0.5">
               {(isStudent ? studentPages : teacherPages).map((page, i) => (
                 <NavigationMenuItem key={i}>
                   <NavLink to={page.path}>
                     {({ isActive }) => (
                       <div
-                        className={`${navigationMenuTriggerStyle()}${
+                        className={`h-6 !py-1 !px-2.5 ${navigationMenuTriggerStyle()}${
                           isActive
                             ? " dark:bg-primary bg-primary dark:text-secondary text-secondary"
                             : " bg-transparent"
@@ -54,37 +59,54 @@ const NavBar = () => {
               ))}
             </NavigationMenuList>
           </NavigationMenu>
-          <div className="flex items-center justify-center gap-x-2">
-            <ModeToggle />
-            <Popover>
-              <PopoverTrigger>
-                <Avatar className="size-8 sm:size-9">
-                  <AvatarImage
-                    src="https://github.com/skeby.png"
-                    alt="@skeby"
-                  />
-                  <AvatarFallback className="font-medium">
-                    {user?.firstName[0].concat(user?.lastName[0])}
-                  </AvatarFallback>
-                </Avatar>
-              </PopoverTrigger>
-              <PopoverContent className="w-60" align="end">
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium leading-none">
-                      {user?.firstName} {user?.lastName}
-                    </h4>
-                    <p className="text-sm text-muted-foreground">
-                      {user?.type}
-                    </p>
+        )}
+        <div className="flex items-center justify-center gap-x-2">
+          {(!isMenuOpen || !isMobile) && (
+            <>
+              <ModeToggle />
+              <Popover>
+                <PopoverTrigger>
+                  <Avatar className="relative size-8 sm:size-9">
+                    <div className="relative">
+                      <AvatarImage
+                        src="https://github.com/skeby.png"
+                        alt="@skeby"
+                        className="w-full h-full"
+                      />
+                      <div className="absolute top-0 right-0 bottom-0 left-0 bg-accent opacity-0 transition-opacity hover:opacity-50"></div>
+                    </div>
+                    <AvatarFallback className="font-medium">
+                      {user?.firstName[0].concat(user?.lastName[0])}
+                    </AvatarFallback>
+                  </Avatar>
+                </PopoverTrigger>
+                <PopoverContent className="w-60" align="end">
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none">
+                        {user?.firstName} {user?.lastName}
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        {user?.type}
+                      </p>
+                    </div>
+                    <Button onClick={() => handleLogout()} className="h-8">
+                      Logout
+                    </Button>
                   </div>
-                  <Button onClick={() => handleLogout()} className="h-8">
-                    Logout
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
+                </PopoverContent>
+              </Popover>
+            </>
+          )}
+          {isMobile && (
+            <Button
+              variant={"ghost"}
+              className="size-8 sm:size-9 p-0 rounded-full"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+            >
+              <HamburgerMenuIcon />
+            </Button>
+          )}
         </div>
       </div>
     </div>

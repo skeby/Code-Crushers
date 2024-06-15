@@ -78,6 +78,7 @@ const Login = () => {
       dismiss();
       toast({
         title: "Login successful",
+        duration: 2000,
       });
       navigate("/");
       localStorage.setItem(USER, JSON.stringify(user));
