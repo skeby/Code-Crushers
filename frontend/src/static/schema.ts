@@ -12,7 +12,7 @@ export const validation = {
 };
 
 export const UserLoginSchema = z.object({
-  email: z.string().email({ message: validation.email }),
+  username: z.string().min(1, { message: validation.required }),
   password: z
     .string()
     .regex(/(?=.*[\W_])/, validation.password.specialChar)
