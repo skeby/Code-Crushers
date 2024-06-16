@@ -40,7 +40,7 @@ const TestConstruct: React.FC = () => {
   console.log(mutate);
 
   const [questions, setQuestions] = useState<QuestionType[]>([]);
-  const [submitted, setSubmitted] = useState<boolean>(false);
+//   const [submitted, setSubmitted] = useState<boolean>(false);
     
     // const [course, setCourse] = useState("");
     // const [creator, setCreator] = useState("");
@@ -172,7 +172,7 @@ const TestConstruct: React.FC = () => {
           {/* <Button onClick={handleSubmit}>Submit</Button> */}
         </div>
 
-        {submitted && (
+        {/* {submitted && (
           <div>
             <h2>Submitted Questions and Answers</h2>
             {questions.map((question, index) => (
@@ -187,7 +187,7 @@ const TestConstruct: React.FC = () => {
               </div>
             ))}
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
