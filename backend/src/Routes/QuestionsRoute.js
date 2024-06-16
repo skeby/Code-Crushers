@@ -9,7 +9,8 @@ import { createExam } from '../Controllers/ExamController.js'
 const QuestionRouter= express.Router()
 
 
-Questionrouter.post('/addTheoryQuestions',authMiddleware, addTheoryQuestion )
+Questionrouter.post('/addTheoryQuestions',authMiddleware, addTheoryQuestion );
+// Questionrouter.get('/getTheoryQuestions', authMiddleware, getTheoryQuestions) ;
 QuestionRouter.post('/createExam',authMiddleware, createExam)
 QuestionRouter.post('/createTheory',authMiddleware,createTheoryQuestion )
 QuestionRouter.post('/createObjective',authMiddleware, createObjectiveQuestion );

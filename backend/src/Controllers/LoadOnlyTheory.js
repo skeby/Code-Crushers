@@ -1,6 +1,4 @@
-// import TheoryQuestion from '../Models/TheoryQuestionModel.js';
-import Teacher from '../Models/TeacherModels.js';
-// import Exam from '../Models/ExamModel.js';
+import Teacher from '../Models/TeacherModel.js';
 import AllTheory from '../Models/AllTheory.js';
 
 export const addTheoryQuestion = async (req, res) => {
@@ -42,3 +40,13 @@ export const addTheoryQuestion = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+// export const getTheoryQuestions = async (req, res) => {
+//   try {
+//       const theoryQuestions = await TheoryQuestion.find();
+//       res.status(200).json(theoryQuestions);
+//   } catch (error) {
+//       res.status(500).json({ message: 'Error fetching theory questions', error });
+//   }
+// };
