@@ -20,4 +20,11 @@ export const UserLoginSchema = z.object({
     .regex(/(?=.*\d)/, validation.password.number),
 });
 
+export const CreateTestSchema = z.object({
+  startTime: z.string().min(1, validation.required),
+  endTime: z.string().min(1, { message: validation.required }),
+  course: z.string().min(1, { message: validation.required }),
+});
+
 export type UserLoginFields = z.infer<typeof UserLoginSchema>;
+export type CreateTestFields = z.infer<typeof CreateTestSchema>;

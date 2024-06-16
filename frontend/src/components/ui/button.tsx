@@ -66,7 +66,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           })
         )}
         disabled={disabled || loading}
-        children={loading ? <Loader rotate={Infinity} /> : children}
+        children={loading ? <Loader className="animate-spin" /> : children}
         ref={ref}
         {...props}
       />
