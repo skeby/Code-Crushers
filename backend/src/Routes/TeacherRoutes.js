@@ -6,5 +6,4 @@ const TeacherRouter = express.Router()
 
 TeacherRouter.post('/registerTeacher', RegisterTeacher)
 TeacherRouter.post('/loginTeacher', LoginTeacher );
-
 export default TeacherRouter;
