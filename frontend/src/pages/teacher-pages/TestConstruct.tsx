@@ -32,6 +32,7 @@ interface QuestionType {
 }
 
 const TestConstruct: React.FC = () => {
+
   const { mutate } = useMutation({
     mutationFn: (data) => apiCall(data, paths.teacher.createTheory, "post"),
   });
@@ -39,6 +40,15 @@ const TestConstruct: React.FC = () => {
 
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [submitted, _setSubmitted] = useState<boolean>(false);
+    
+    const [course, setCourse] = useState("");
+    const [creator, setCreator] = useState("");
+
+
+    //the teachers reg number/email for the creator field
+    const handleNewQuestion = () => {
+        setQuestions([...questions, { questionText: '', answerText: '' }]);
+    };
 
   const form = useForm<CreateTestFields>({
     resolver: zodResolver(CreateTestSchema),
