@@ -20,7 +20,9 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true }));
 
-const MONGODB_URI = process.env.MONGODB_URI || `mongodb+srv://agbakwuruoluchi29:2mNJfvNczG21k197@cluster0.qv7kibt.mongodb.net/ExamManagement`
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  `mongodb+srv://agbakwuruoluchi29:2mNJfvNczG21k197@cluster0.qv7kibt.mongodb.net/ExamManagement`;
 
 const __dirname = path.resolve();
 
