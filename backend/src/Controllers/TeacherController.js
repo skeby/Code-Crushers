@@ -70,3 +70,33 @@ export const LoginTeacher = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const GetTeacherById = async (req, res) => {
+  try {
+      const teacherId = req.params.teacherId; 
+
+      const teacher= await Teacher.findById(teacherId);
+      if (!teacher) {
+          return res.status(404).json({ message: 'Teacher not found' });
+      }
+      res.status(200).json(teacher);
+  } catch (error) {
+      console.error('Error fetching teacher by ID:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+export const GetAllTeachers = async (req, res) => {
+  try {
+      const teachers = await Teacher.find();
+
+      if (teachers.length === 0) {
+          return res.status(404).json({ message: 'No teachers found' });
+      }
+      res.status(200).json(teachers);
+  } catch (error) {
+      console.error('Error fetching all teachers:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+};
