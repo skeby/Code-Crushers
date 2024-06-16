@@ -62,10 +62,19 @@ const ExamPage = () => {
   };
 
   const handleSubmit = () => {
+
+    //the students email or id
+    // the course name
+    // time of exam start
+    //time of exam end
+    // array of the answers
+    
     setHasFinished(true);
     setCountDownTime(0);
     console.log(answers);
   };
+
+
   return (
     <div className="flex flex-col items-center gap-y-9">
       {!hasFinished ? (
