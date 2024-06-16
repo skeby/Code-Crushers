@@ -33,11 +33,11 @@ const ExamSchema = new mongoose.Schema({
     },
     objectiveQuestions: [{ 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'ObjectiveQuestion' 
+        ref: 'ObjectiveQuestions' 
     }],
     theoryQuestions: [{ 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'TheoryQuestion' 
+        ref: 'TheoryQuestions' 
     }],
    // answers: [AnswerSchema]
 });

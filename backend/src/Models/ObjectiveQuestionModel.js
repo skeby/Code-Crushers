@@ -2,19 +2,34 @@ import mongoose from 'mongoose';
 
 const ObjectiveQuestionSchema = new mongoose.Schema({
     questionType: {
-        type:String,
+        type: String,
         required: true,
-        default:'objective'
+        default: 'objective'
+    },
+    examId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Exam',
+        required: true
     },
     question: {
         type: String,
         required: true
     },
+    questionId:{
+        type:String
+    },
+    course: {
+        type: String,
+        required: true
+    },
     options: {
-        a: { type: String, required: true },
-        b: { type: String, required: true },
-        c: { type: String, required: true },
-        d: { type: String, required: true },
+        type: {
+            a: { type: String, required: true },
+            b: { type: String, required: true },
+            c: { type: String, required: true },
+            d: { type: String, required: true }
+        },
+        required: true
     },
     correctOption: {
         type: String,
@@ -23,8 +38,10 @@ const ObjectiveQuestionSchema = new mongoose.Schema({
     }
 });
 
-const ObjectiveQuestion = mongoose.model('Objective', ObjectiveQuestionSchema);
+const ObjectiveQuestion = mongoose.model('ObjectiveQuestions', ObjectiveQuestionSchema);
+
 export default ObjectiveQuestion;
+
 
 
 
