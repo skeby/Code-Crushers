@@ -26,5 +26,12 @@ export const CreateTestSchema = z.object({
   course: z.string().min(1, { message: validation.required }),
 });
 
+export const CreateExamSchema = z.object({
+  course: z.string().min(1, { message: validation.required }),
+  startTime: z.date({ required_error: validation.required }),
+  endTime: z.date({ required_error: validation.required }),
+});
+
 export type UserLoginFields = z.infer<typeof UserLoginSchema>;
 export type CreateTestFields = z.infer<typeof CreateTestSchema>;
+export type CreateExamFields = z.infer<typeof CreateExamSchema>;
