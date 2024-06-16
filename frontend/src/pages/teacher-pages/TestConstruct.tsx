@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-import Question from "@/components/teacherSection/Question";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { apiCall } from "@/services";
@@ -22,101 +20,101 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { CreateTestFields, CreateTestSchema } from "@/static/schema";
+import { CreateExamFields, CreateExamSchema } from "@/static/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
+import { useAppSelector } from "@/state/store";
+import { User } from "@/types";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import TimeSelector from "@/components/TimeSelector";
 
-interface QuestionType {
-  questionText: string;
-  answerText: string;
-}
-
-const TestConstruct: React.FC = () => {
-
-  const { mutate } = useMutation({
-    mutationFn: (data) => apiCall(data, paths.teacher.createTheory, "post"),
+const TestConstruct = () => {
+  const { mutate: createExam, isPending: isCreateExamPending } = useMutation({
+    mutationFn: (data: CreateExamFields) =>
+      apiCall({ ...data, creator: user?.id }, paths.teacher.createExam, "post"),
   });
-  console.log(mutate);
 
-  const [questions, setQuestions] = useState<QuestionType[]>([]);
-  const [submitted, _setSubmitted] = useState<boolean>(false);
-    
-    const [course, setCourse] = useState("");
-    const [creator, setCreator] = useState("");
-
-
-    //the teachers reg number/email for the creator field
-    const handleNewQuestion = () => {
-        setQuestions([...questions, { questionText: '', answerText: '' }]);
-    };
-
-  const form = useForm<CreateTestFields>({
-    resolver: zodResolver(CreateTestSchema),
+  const createExamForm = useForm<CreateExamFields>({
+    resolver: zodResolver(CreateExamSchema),
     defaultValues: {
-      startTime: "",
-      endTime: "",
       course: "",
     },
   });
 
-  const { handleSubmit, control } = form;
+  const { user } = useAppSelector((state) => state.auth);
 
-  const handleNewQuestion = () => {
-    setQuestions([...questions, { questionText: "", answerText: "" }]);
+  const { createdExams } = user as User<"Teacher">;
+
+  const { handleSubmit, control } = createExamForm;
+
+  const onCreateExamFormSubmit: SubmitHandler<CreateExamFields> = (data) => {
+    createExam(data);
   };
-
-  const onSubmit: SubmitHandler<CreateTestFields> = (data) => {
-    console.log(data);
-  };
-
-  //   const handleSubmit = () => {
-  //     //simulate POST request
-  //     const allValid = questions.every(
-  //       (question) =>
-  //         question.questionText.trim() !== "" && question.answerText.trim() !== ""
-  //     );
-
-  //     if (allValid) {
-  //       toast("Published Questions 🎉");
-  //       setSubmitted(true);
-  //     } else {
-  //       toast(
-  //         "Please enter both a question and marking guide for all questions."
-  //       );
-  //     }
-  //   };
 
   return (
-    <div>
-      <p className="mb-4 font-semibold">
-        No tests available. Click on the button bellow to create a test.
-      </p>
+    <div className="flex flex-col items-center">
+      {createdExams?.length === 0 ? (
+        <p className="mb-4 font-semibold">
+          No tests available. Click on the button below to create a test.
+        </p>
+      ) : (
+        <div className="flex w-full flex-col gap-y-2 mb-4">
+          {createdExams?.map((createdExam, i) => (
+            <Card key={i} className="flex justify-between">
+              <CardHeader className="flex justify-between sm:items-center gap-4 sm:flex-row w-full">
+                <div>
+                  <CardTitle className="text-xl">{createdExam}</CardTitle>
+                  <CardDescription>Questions Created:</CardDescription>
+                </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant={"outline"}>Add Question</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Question</DialogTitle>
+                      <DialogDescription>
+                        Add a question here.
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      )}
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline">Create a test</Button>
+          <div
+            className={
+              createdExams?.length === 0
+                ? ""
+                : "fixed bottom-20 px-4 py-4 rounded-xl shadow-header backdrop-blur-[1px] bg-secondary/50"
+            }
+          >
+            <Button variant={"outline"}>
+              {createdExams?.length === 0
+                ? "Create an exam"
+                : "Create new exam"}
+            </Button>
+          </div>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Setup Test</DialogTitle>
-            <DialogDescription>Dialog to setup a test.</DialogDescription>
-            <Form {...form}>
-              <form onSubmit={handleSubmit(onSubmit)} id="create-test-form">
+            <DialogTitle>Exam</DialogTitle>
+            <DialogDescription>Create an exam here.</DialogDescription>
+            <Form {...createExamForm}>
+              <form
+                onSubmit={handleSubmit(onCreateExamFormSubmit)}
+                id="create-exam-form"
+              >
                 <div className="grid w-full items-center gap-4">
-                  <div className="flex flex-col space-y-1.5">
-                    <FormField
-                      control={control}
-                      name="startTime"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Start Time</FormLabel>
-                          <FormControl>
-                            <Input placeholder="" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
                   <div className="flex flex-col space-y-1.5">
                     <FormField
                       control={control}
@@ -126,9 +124,42 @@ const TestConstruct: React.FC = () => {
                           <FormLabel>Course Name</FormLabel>
                           <FormControl>
                             <Input
-                              type="password"
                               placeholder="Enter the name of the course"
                               {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-1.5">
+                    <FormField
+                      control={control}
+                      name="startTime"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Start Time</FormLabel>
+                          <FormControl>
+                            <TimeSelector
+                              onTimeChange={(time) => field.onChange(time)}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-1.5">
+                    <FormField
+                      control={control}
+                      name="endTime"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>End Time</FormLabel>
+                          <FormControl>
+                            <TimeSelector
+                              onTimeChange={(time) => field.onChange(time)}
                             />
                           </FormControl>
                           <FormMessage />
@@ -142,55 +173,16 @@ const TestConstruct: React.FC = () => {
           </DialogHeader>
           <DialogFooter>
             <Button
-              // loading={isPending}
+              loading={isCreateExamPending}
               type="submit"
               className="w-full"
-              form="create-test-form"
+              form="create-exam-form"
             >
               Submit
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className="p-3">
-        <div className="p-3 flex justify-end">
-          <Button onClick={handleNewQuestion}>Add Question</Button>
-        </div>
-
-        <div className="flex justify-center items-center">
-          <div className="w-[60%]">
-            {questions.map((question, index) => (
-              <Question
-                key={index}
-                index={index}
-                question={question}
-                setQuestion={setQuestions}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="justify-center flex">
-          {/* <Button onClick={handleSubmit}>Submit</Button> */}
-        </div>
-
-        {submitted && (
-          <div>
-            <h2>Submitted Questions and Answers</h2>
-            {questions.map((question, index) => (
-              <div key={index}>
-                <h3>Question {index + 1}</h3>
-                <p>
-                  <strong>Question:</strong> {question.questionText}
-                </p>
-                <p>
-                  <strong>Answer:</strong> {question.answerText}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 };
