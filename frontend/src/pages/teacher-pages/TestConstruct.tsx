@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import Question from "@/components/teacherSection/Question";
 import { Button } from "@/components/ui/button";
@@ -39,10 +40,10 @@ const TestConstruct: React.FC = () => {
   console.log(mutate);
 
   const [questions, setQuestions] = useState<QuestionType[]>([]);
-  const [submitted, _setSubmitted] = useState<boolean>(false);
+  const [submitted, setSubmitted] = useState<boolean>(false);
     
-    const [course, setCourse] = useState("");
-    const [creator, setCreator] = useState("");
+    // const [course, setCourse] = useState("");
+    // const [creator, setCreator] = useState("");
 
 
     //the teachers reg number/email for the creator field
@@ -61,9 +62,6 @@ const TestConstruct: React.FC = () => {
 
   const { handleSubmit, control } = form;
 
-  const handleNewQuestion = () => {
-    setQuestions([...questions, { questionText: "", answerText: "" }]);
-  };
 
   const onSubmit: SubmitHandler<CreateTestFields> = (data) => {
     console.log(data);
