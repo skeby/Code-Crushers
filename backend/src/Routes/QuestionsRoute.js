@@ -4,11 +4,15 @@ import { createTheoryQuestion } from '../Controllers/TheoryQuestionController.js
 import { createObjectiveQuestion } from '../Controllers/ObjectiveQuestionController.js'
 import { addTheoryQuestion } from '../Controllers/LoadOnlyTheory.js'
 import authMiddleware, {} from '../Middlewares/Authorization.js'
+import { createExam } from '../Controllers/ExamController.js'
 
-const Questionrouter = express.Router()
+const QuestionRouter= express.Router()
 
-Questionrouter.post('/createTheory',authMiddleware,createTheoryQuestion )
-Questionrouter.post('/createObjective',authMiddleware, createObjectiveQuestion );
+
 Questionrouter.post('/addTheoryQuestions',authMiddleware, addTheoryQuestion )
+QuestionRouter.post('/createExam',authMiddleware, createExam)
+QuestionRouter.post('/createTheory',authMiddleware,createTheoryQuestion )
+QuestionRouter.post('/createObjective',authMiddleware, createObjectiveQuestion );
 
-export default Questionrouter;
+
+export default QuestionRouter;

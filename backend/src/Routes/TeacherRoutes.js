@@ -2,9 +2,8 @@ import express from 'express'
 
 import { LoginTeacher, RegisterTeacher } from '../Controllers/TeacherController.js'
 
-const router = express.Router()
+const TeacherRouter = express.Router()
 
-router.post('/registerTeacher', RegisterTeacher)
-router.post('/loginTeacher', LoginTeacher );
-
-export default router;
+TeacherRouter.post('/registerTeacher', RegisterTeacher)
+TeacherRouter.post('/loginTeacher', LoginTeacher );
+export default TeacherRouter;

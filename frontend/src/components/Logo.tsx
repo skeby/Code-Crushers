@@ -5,8 +5,8 @@ interface Props {
 }
 const Logo = ({ className }: Props) => {
   return (
-    <Link to={"/"} className={className ?? "text-sm sm:text-2xl"}>
-      Logo
+    <Link to={"/"} className={className ?? "text-sm"}>
+      Grade AI
     </Link>
   );
 };

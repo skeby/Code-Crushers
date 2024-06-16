@@ -7,10 +7,14 @@ export interface User<T extends Role> {
   lastName: string;
   // status: string;
   role: T;
-  exams?: T extends "Student" ? StudentExam[] : never;
-  matricNumber?: T extends "Student" ? string : never;
-  registrationNumber?: T extends "Teacher" ? string : never;
+  // exams?: T extends "Student" ? StudentExam[] : never;
+  createdExams?: T extends "Teacher" ? CreatedExams : never;
+  department?: T extends "Teacher" ? string : never;
+  // matricNumber?: T extends "Student" ? string : never;
+  // registrationNumber?: T extends "Teacher" ? string : never;
 }
+
+export type CreatedExams = (string | null)[];
 
 export type Theme = "dark" | "light" | "system";
 

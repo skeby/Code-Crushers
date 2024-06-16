@@ -4,6 +4,9 @@ export const paths = {
   teacher: {
     register: `${user}/registerTeacher`,
     login: `${user}/loginTeacher`,
+    createTheory: `${user}/createTheory`,
+    createObjective: `${user}/createObjective`,
+    createExam: `${user}/createExam`,
   },
   student: {},
 };

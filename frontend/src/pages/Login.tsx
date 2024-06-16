@@ -1,4 +1,3 @@
-import { jwtDecode } from "jwt-decode";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,7 +24,7 @@ import { UserLoginFields, UserLoginSchema } from "@/static/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { setUser } from "@/state/slices/authSlice";
-import { User } from "@/types";
+import { Role, User } from "@/types";
 // import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import useAuthenticationStatus from "@/hooks/useAuthenticationStatus";
@@ -40,12 +39,31 @@ const Login = () => {
     onSuccess: (data) => {
       // console.log(data);
       // if (data?.status === "success") {
-      console.log(data);
-      const { token } = data;
-      const user = jwtDecode(token);
-      console.log(user);
+      // console.log(data);
+      const { token, teacher } = data;
+      const {
+        _id,
+        firstName,
+        lastName,
+        email,
+        role,
+        department,
+        createdExams,
+      } = teacher;
+      // const user = jwtDecode(token);
+      console.log(teacher);
       localStorage.setItem(AUTH_TOKEN, JSON.stringify(token));
-      // dispatch(setUser(user));
+      dispatch(
+        setUser({
+          id: _id,
+          firstName,
+          lastName,
+          email,
+          role,
+          department,
+          createdExams,
+        })
+      );
       toast({
         title: "Login successful",
         duration: 2000,
@@ -67,7 +85,7 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<UserLoginFields> = (data, e) => {
     const { id } = e?.target;
-    let user: User<"Student"> | User<"Teacher">;
+    let user: User<Role>;
     // Simulate API call
     if (id === "student-login-form") {
       // // Call student login API
@@ -78,7 +96,7 @@ const Login = () => {
         lastName: "Akinsanya",
         // status: "paid",
         role: "Student",
-        matricNumber: "21CG029820",
+        // matricNumber: "21CG029820",
       };
       dispatch(setUser(user));
     } else if (id === "teacher-login-form") {
