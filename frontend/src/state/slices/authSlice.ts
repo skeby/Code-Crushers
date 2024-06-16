@@ -1,15 +1,25 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { User, UserType } from "@/types";
+import { User, Role } from "@/types";
 import { AUTH_TOKEN, USER } from "@/static";
+// import { jwtDecode } from "jwt-decode";
 
 interface AuthState {
-  user: User<UserType> | null;
+  user: User<Role> | null;
   isAuthenticated: boolean;
   // hasOnboarded: boolean;
   error: string | null;
 }
 
 const user = JSON.parse(localStorage.getItem(USER) || "null");
+// const token = JSON.parse(localStorage.getItem(AUTH_TOKEN) || "null");
+// const decodedToken: User<Role> | null = token
+//   ? jwtDecode(token)
+//   : null;
+// const user = decodedToken
+//   ? {
+//       id: decodedToken.,
+//     }
+//   : null;
 
 const initialState: AuthState = {
   user: user,
@@ -45,7 +55,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<User<UserType>>) => {
+    setUser: (state, action: PayloadAction<User<Role>>) => {
       state.user = action.payload;
       localStorage.setItem(USER, JSON.stringify(action.payload));
       if (!state.isAuthenticated) {

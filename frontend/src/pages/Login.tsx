@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { APP_NAME, USER, loginTabs } from "@/static";
+import { APP_NAME, AUTH_TOKEN, loginTabs } from "@/static";
 import Logo from "@/components/Logo";
 import { useAppDispatch } from "@/state/store";
 import { UserLoginFields, UserLoginSchema } from "@/static/schema";
@@ -25,14 +26,35 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { setUser } from "@/state/slices/authSlice";
 import { User } from "@/types";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import useAuthenticationStatus from "@/hooks/useAuthenticationStatus";
+import { useMutation } from "@tanstack/react-query";
+import { apiCall } from "@/services";
+import { paths } from "@/services/static";
 
 const Login = () => {
+  const { mutate: login, isPending } = useMutation({
+    mutationFn: (data: { email: string; password: string }) =>
+      apiCall(data, paths.teacher.login, "post"),
+    onSuccess: (data) => {
+      // console.log(data);
+      // if (data?.status === "success") {
+      console.log(data);
+      const { token } = data;
+      const user = jwtDecode(token);
+      console.log(user);
+      localStorage.setItem(AUTH_TOKEN, JSON.stringify(token));
+      // dispatch(setUser(user));
+      toast({
+        title: "Login successful",
+        duration: 2000,
+      });
+      // }
+    },
+  });
   useAuthenticationStatus({ pageType: "public" });
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const { toast } = useToast();
   const form = useForm<UserLoginFields>({
     resolver: zodResolver(UserLoginSchema),
@@ -47,42 +69,33 @@ const Login = () => {
     const { id } = e?.target;
     let user: User<"Student"> | User<"Teacher">;
     // Simulate API call
-    const { dismiss } = toast({
-      title: "Logging in...",
-    });
-    setTimeout(() => {
-      if (id === "student-login-form") {
-        // Call student login API
-        user = {
-          id: 1,
-          email: "akinsanyaadeyinka4166@gmail.com",
-          firstName: "Adeyinka",
-          lastName: "Akinsanya",
-          status: "paid",
-          type: "Student",
-          matricNumber: "21CG029820",
-        };
-      } else if (id === "teacher-login-form") {
-        user = {
-          id: 1,
-          email: "akinsanyaadeyinka4166@gmail.com",
-          firstName: "Adeyinka",
-          lastName: "Akinsanya",
-          status: "free",
-          type: "Teacher",
-          registrationNumber: "21CG029820",
-        };
-      }
-      console.log(data);
+    if (id === "student-login-form") {
+      // // Call student login API
+      user = {
+        id: 1,
+        email: "akinsanyaadeyinka4166@gmail.com",
+        firstName: "Adeyinka",
+        lastName: "Akinsanya",
+        // status: "paid",
+        role: "Student",
+        matricNumber: "21CG029820",
+      };
       dispatch(setUser(user));
-      dismiss();
-      toast({
-        title: "Login successful",
-        duration: 2000,
+    } else if (id === "teacher-login-form") {
+      login({
+        password: data.password,
+        email: data.username,
       });
-      navigate("/");
-      localStorage.setItem(USER, JSON.stringify(user));
-    }, 2000);
+      // user = {
+      //   id: 1,
+      //   email: "akinsanyaadeyinka4166@gmail.com",
+      //   firstName: "Adeyinka",
+      //   lastName: "Akinsanya",
+      //   // status: "free",
+      //   role: "Teacher",
+      //   registrationNumber: "21CG029820",
+      // };
+    }
   };
   return (
     <div className="max-h-screen p-5 sm:p-0 h-screen flex flex-col gap-y-4 items-center justify-center">
@@ -145,6 +158,7 @@ const Login = () => {
                               <FormLabel>Password</FormLabel>
                               <FormControl>
                                 <Input
+                                  type="password"
                                   placeholder="Enter your password"
                                   {...field}
                                 />
@@ -160,6 +174,7 @@ const Login = () => {
               </CardContent>
               <CardFooter className="flex-grow items-end sm:items-center">
                 <Button
+                  loading={isPending}
                   type="submit"
                   className="w-full"
                   form={`${tab.toLowerCase()}-login-form`}

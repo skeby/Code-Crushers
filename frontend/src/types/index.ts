@@ -1,12 +1,12 @@
-export type UserType = "Student" | "Teacher";
+export type Role = "Student" | "Teacher";
 
-export interface User<T extends UserType> {
+export interface User<T extends Role> {
   id: number;
   email: string;
   firstName: string;
   lastName: string;
-  status: string;
-  type: T;
+  // status: string;
+  role: T;
   exams?: T extends "Student" ? StudentExam[] : never;
   matricNumber?: T extends "Student" ? string : never;
   registrationNumber?: T extends "Teacher" ? string : never;
