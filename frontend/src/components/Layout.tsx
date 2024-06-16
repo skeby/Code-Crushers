@@ -7,7 +7,7 @@ const Layout = () => {
   return (
     <div className="">
       <div className="min-h-screen relative flex flex-col">
-        <header className="sticky top-0 z-[1] shadow-header backdrop-blur-[3px] bg-background/50">
+        <header className="h-12 sticky top-0 z-[1] shadow-header backdrop-blur-[3px] bg-background/50">
           <NavBar />
         </header>
         <main className="flex-grow lg:p-12 p-5 max-w-[1200px] w-full mx-auto">
