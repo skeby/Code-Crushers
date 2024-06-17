@@ -8,6 +8,7 @@ export const paths = {
     createObjective: `${user}/createObjective`,
     createExam: `${user}/createExam`,
     addTheoryQuestions: `${user}/addTheoryQuestions`,
+    getAllStudents: `${user}/getAllStudents`,
   },
   student: {
     register: `${user}/registerStudent`,

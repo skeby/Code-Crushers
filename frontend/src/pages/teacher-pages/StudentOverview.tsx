@@ -1,3 +1,4 @@
+import ScreenLoader from "@/components/ScreenLoader";
 import {
   Table,
   TableBody,
@@ -8,6 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { apiCall } from "@/services";
+import { paths } from "@/services/static";
+import { useQuery } from "@tanstack/react-query";
 
 interface Student {
   matricNumber: string;
@@ -51,6 +55,12 @@ const students: Student[] = [
 ];
 
 const StudentOverview = () => {
+  const { data, isFetching, isPending } = useQuery({
+    queryKey: ["students"],
+    queryFn: (data) => apiCall(data, paths.teacher.getAllStudents, "get"),
+  });
+
+  console.log(data)
   const totalScoreNumber = students.reduce(
     (acc, student) => acc + student.scoreNumber,
     0
@@ -85,6 +95,7 @@ const StudentOverview = () => {
 
   return (
     <div>
+      <ScreenLoader loading={isFetching || isPending} />
       <div className="">
         <Table>
           <TableCaption>Students Performance Overview</TableCaption>

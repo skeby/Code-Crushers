@@ -8,34 +8,33 @@ import { sendEmail } from "../Utilities/Email.js";
 dotenv.config();
 
 export const RegisterStudent = async (req, res) => {
+  const { firstName, lastName, email, registeredCourses, role } = req.body;
 
-    const {firstName,lastName,email,registeredCourses,role} = req.body;
+  if (!firstName && !lastName && !email && !registeredCourses && !role) {
+    return res.status(400).json({ message: "These fields are required" });
+  }
+  let user = await Student.findOne({ email });
+  if (user) {
+    return res.status(400).json({ message: "student already exists" });
+  }
+  const password = generatePassword();
+  user = new Student({
+    firstName,
+    lastName,
+    email,
+    registeredCourses,
+    role,
+  });
+  await user.save();
 
-    if(!firstName && !lastName && !email && !registeredCourses && !role){
-        return res.status(400).json({ message: 'These fields are required'})
-    }
-    let user = await Student.findOne({ email });
-    if (user) {
-        return res.status(400).json({ message: 'student already exists' });
-    }
-    const password = generatePassword();
-    user = new Student({
-        firstName,
-        lastName,
-        email,
-        registeredCourses,
-        role
-    });
-    await user.save();
+  sendEmail({
+    to: email,
+    subject: "Welcome to the System",
+    html: `<p>Your password is: ${password}</p>`,
+  });
 
-    sendEmail({
-        to: email,
-        subject: 'Welcome to the System',
-        html: `<p>Your password is: ${password}</p>`,
-    });
-
-    res.status(201).json({ message: `${role} registered successfully!` });
-
+  res.status(201).json({ message: `${role} registered successfully!` });
+};
 
 export const LoginStudent = async (req, res) => {
   try {
