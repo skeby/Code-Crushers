@@ -24,7 +24,7 @@ const ExamOverview = () => {
                   </CardTitle>
                 </div>
                 <Link to={"thisissupposedtobetheexamid"}>
-                  <Button variant={"link"}>Take Exam</Button>
+                  <Button variant={"outline"}>Take Exam</Button>
                 </Link>
               </CardHeader>
             </Card>

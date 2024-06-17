@@ -41,6 +41,7 @@ const Login = () => {
         "post"
       ),
     onSuccess: (data) => {
+      if (!data) return;
       const { token } = data;
       if (token) localStorage.setItem(AUTH_TOKEN, JSON.stringify(token));
       if (data.student !== undefined) {

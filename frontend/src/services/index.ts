@@ -37,12 +37,17 @@ export const apiCall = async (
         throw new Error(`Unsupported method: ${method}`);
     }
 
+    console.log(res);
     if (!res) {
       throw new Error("Empty response from server");
     }
 
     const responseData: any = res.data;
-    if (responseData.error === undefined) {
+    if (
+      responseData.error === undefined &&
+      res.status >= 200 &&
+      res.status <= 299
+    ) {
       //   message.destroy();
       if (method !== "get") {
         toast({
@@ -73,6 +78,7 @@ export const apiCall = async (
       duration: 6000,
       variant: "destructive",
     });
+    console.log("log");
     // message.error(errorMessage, 6);
     return false;
   }

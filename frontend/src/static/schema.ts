@@ -16,8 +16,8 @@ export const UserLoginSchema = z.object({
   password: z
     .string()
     // .regex(/(?=.*[\W_])/, validation.password.specialChar)
-    .min(8, validation.password.length)
-    .regex(/(?=.*\d)/, validation.password.number),
+    .min(8, validation.password.length),
+  // .regex(/(?=.*\d)/, validation.password.number),
 });
 
 export const CreateTheorySchema = z.object({

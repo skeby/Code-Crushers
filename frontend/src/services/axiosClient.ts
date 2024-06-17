@@ -85,9 +85,6 @@ client.interceptors.response.use(
     if (error?.message === "Network Error") {
       return Promise.reject({
         message: "Something went wrong! Please try again.",
-        data: {
-          message: "Please check your internet connection and try again.",
-        },
       });
     }
 

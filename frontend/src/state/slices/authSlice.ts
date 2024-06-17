@@ -24,6 +24,7 @@ const user = JSON.parse(localStorage.getItem(USER) || "null");
 const initialState: AuthState = {
   user: user,
   isAuthenticated: user ? true : false,
+  // login: useMutateFunction
 
   // Sample teacher user
   // user: {
