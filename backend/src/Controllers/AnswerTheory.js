@@ -37,7 +37,6 @@ export const submitTheoryAnswer = async (req, res) => {
 
         const studentExamIndex = student.scores.findIndex(score => score.examId.toString() === examId && score.questionType === 'theory');
         if (studentExamIndex !== -1) {
-            // If the student has already taken this exam for theory questions, update the score
             student.scores[studentExamIndex].score += score;
         } else {
             student.takenExams.push({
@@ -47,7 +46,7 @@ export const submitTheoryAnswer = async (req, res) => {
             });
         }
 
-        // Update the exam entry in scores array
+       
         const scoreIndex = student.scores.findIndex(sc => sc.examId.toString() === exam._id.toString());
         if (scoreIndex !== -1) {
             student.scores[scoreIndex].score += score;
@@ -59,6 +58,12 @@ export const submitTheoryAnswer = async (req, res) => {
             });
         }
         exam.theoryQuestions.push(questionId);
+        
+        // Add student to the exam's students array if not already added
+        if (!exam.student.includes(studentId)) {
+            exam.student.push(studentId);
+        }
+        await exam.save();
         await student.save();
       
         const totalPossibleTheoryScore = 25; 

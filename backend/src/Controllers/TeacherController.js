@@ -4,6 +4,7 @@ import Teacher from "../Models/TeacherModel.js";
 import dotenv from "dotenv";
 import { generatePassword } from "../Utilities/PasswordGeneration.js";
 import { sendEmail } from "../Utilities/Email.js";
+import Exam from "../Models/ExamModel.js";
 
 dotenv.config();
 
@@ -97,3 +98,24 @@ export const GetAllTeachers = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const getStudentsByExam = async (req, res) => {
+    const { examId } = req.params;
+
+    try {
+        const exam = await Exam.findById(examId).populate('student', 'firstName lastName email score');
+        if (!exam) {
+            return res.status(404).json({ message: 'Exam not found' });
+        }
+
+        const students = exam.student;
+        res.status(200).json({ students });
+    } catch (error) {
+        console.error('Error fetching students:', error);
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+export default getStudentsByExam;
+

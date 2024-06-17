@@ -41,3 +41,33 @@ export const createTheoryQuestion = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const GetTheoryById = async (req, res) => {
+    try {
+        const theoryId = req.params.theoryId; 
+  
+        const Theory= await TheoryQuestion.findById(theoryId);
+        if (!Theory) {
+            return res.status(404).json({ message: 'Theory not found' });
+        }
+        res.status(200).json(Theory);
+    } catch (error) {
+        console.error('Error fetching Theory by ID:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+  };
+  
+  
+  export const GetAllTheories = async (req, res) => {
+    try {
+        const Theories  = await TheoryQuestion.find();
+  
+        if (Theories.length === 0) {
+            return res.status(404).json({ message: 'No Theories found' });
+        }
+        res.status(200).json(Theories);
+    } catch (error) {
+        console.error('Error fetching all Theories :', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+  };
