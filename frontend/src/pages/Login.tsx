@@ -24,7 +24,7 @@ import { UserLoginFields, UserLoginSchema } from "@/static/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { setUser } from "@/state/slices/authSlice";
-import { Role, User } from "@/types";
+import { Role } from "@/types";
 // import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import useAuthenticationStatus from "@/hooks/useAuthenticationStatus";
