@@ -56,7 +56,6 @@ export const LoginTeacher = async (req, res) => {
     // if (!isMatch) {
     //     return res.status(401).json({ message: 'Invalid credentials' });
     // }
-
     const token = jwt.sign(
       { email: teacher.email, userId: teacher._id, role: teacher.role },
       process.env.SECRET,
