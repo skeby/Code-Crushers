@@ -136,7 +136,7 @@ const TestConstruct = () => {
 
   const { user } = useAppSelector((state) => state.auth);
 
-  const { createdExams } = user as User<"Teacher">;
+  const { createdExams } = user as User<"teacher">;
 
   const {
     handleSubmit: handleCreateExamFormSubmit,
@@ -179,18 +179,19 @@ const TestConstruct = () => {
           No tests available. Click on the button below to create a test.
         </p>
       ) : (
-        <div className="flex w-full flex-col gap-y-2 mb-28">
+        <div className="flex w-full flex-col gap-y-4 mb-28">
           {createdExams?.map((createdExam, i) => (
             <Card key={i} className="flex justify-between">
-              <CardHeader className="flex justify-between sm:items-center gap-4 sm:flex-row w-full">
+              <CardHeader className="flex justify-between p-3 sm:items-center gap-4 sm:flex-row w-full">
                 <div>
-                  <CardTitle className="text-xl">{createdExam}</CardTitle>
+                  <CardTitle className="text-base">{createdExam}</CardTitle>
                   <CardDescription>Questions Created:</CardDescription>
                 </div>
                 <Dialog>
                   <DialogTrigger
                     asChild
                     onClick={() => setOpenedExam(createdExam)}
+                    className="!mt-0"
                   >
                     <Button variant={"outline"}>Add Question</Button>
                   </DialogTrigger>

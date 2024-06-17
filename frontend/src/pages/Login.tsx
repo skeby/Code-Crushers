@@ -34,41 +34,62 @@ import { paths } from "@/services/static";
 
 const Login = () => {
   const { mutate: login, isPending } = useMutation({
-    mutationFn: (data: { email: string; password: string }) =>
-      apiCall(data, paths.teacher.login, "post"),
+    mutationFn: (data: { email: string; password: string; role: Role }) =>
+      apiCall(
+        { email: data.email, password: data.password },
+        data.role === "student" ? paths.student.login : paths.teacher.login,
+        "post"
+      ),
     onSuccess: (data) => {
-      // console.log(data);
-      // if (data?.status === "success") {
-      // console.log(data);
-      const { token, teacher } = data;
-      const {
-        _id,
-        firstName,
-        lastName,
-        email,
-        role,
-        department,
-        createdExams,
-      } = teacher;
-      // const user = jwtDecode(token);
-      console.log(teacher);
-      localStorage.setItem(AUTH_TOKEN, JSON.stringify(token));
-      dispatch(
-        setUser({
-          id: _id,
+      const { token } = data;
+      if (token) localStorage.setItem(AUTH_TOKEN, JSON.stringify(token));
+      if (data.student !== undefined) {
+        const {
+          _id,
+          firstName,
+          lastName,
+          email,
+          role,
+          registeredCourses,
+          takenExams,
+        } = data.student;
+        dispatch(
+          setUser({
+            id: _id,
+            firstName,
+            lastName,
+            email,
+            role: role.toLowerCase(),
+            registeredCourses,
+            takenExams,
+          })
+        );
+      } else if (data.teacher !== undefined) {
+        const {
+          _id,
           firstName,
           lastName,
           email,
           role,
           department,
           createdExams,
-        })
-      );
+        } = data.teacher;
+        dispatch(
+          setUser({
+            id: _id,
+            firstName,
+            lastName,
+            email,
+            role: role.toLowerCase(),
+            department,
+            createdExams,
+          })
+        );
+      }
       toast({
         title: "Login successful",
         duration: 2000,
       });
-      // }
     },
   });
   useAuthenticationStatus({ pageType: "public" });
@@ -85,35 +106,11 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<UserLoginFields> = (data, e) => {
     const { id } = e?.target;
-    let user: User<Role>;
-    // Simulate API call
-    if (id === "student-login-form") {
-      // // Call student login API
-      user = {
-        id: 1,
-        email: "akinsanyaadeyinka4166@gmail.com",
-        firstName: "Adeyinka",
-        lastName: "Akinsanya",
-        // status: "paid",
-        role: "Student",
-        // matricNumber: "21CG029820",
-      };
-      dispatch(setUser(user));
-    } else if (id === "teacher-login-form") {
-      login({
-        password: data.password,
-        email: data.username,
-      });
-      // user = {
-      //   id: 1,
-      //   email: "akinsanyaadeyinka4166@gmail.com",
-      //   firstName: "Adeyinka",
-      //   lastName: "Akinsanya",
-      //   // status: "free",
-      //   role: "Teacher",
-      //   registrationNumber: "21CG029820",
-      // };
-    }
+    login({
+      password: data.password,
+      email: data.username,
+      role: id === "student-login-form" ? "student" : "teacher",
+    });
   };
   return (
     <div className="max-h-screen p-5 sm:p-0 h-screen flex flex-col gap-y-4 items-center justify-center">

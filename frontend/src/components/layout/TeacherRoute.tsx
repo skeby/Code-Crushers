@@ -10,7 +10,7 @@ const TeacherRoute = ({ children }: TeacherRouteProps) => {
   const { user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
-  const isTeacher = user?.role === "Teacher";
+  const isTeacher = user?.role === "teacher";
 
   useEffect(() => {
     if (!isTeacher) {

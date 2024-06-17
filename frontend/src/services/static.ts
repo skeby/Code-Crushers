@@ -9,5 +9,8 @@ export const paths = {
     createExam: `${user}/createExam`,
     addTheoryQuestions: `${user}/addTheoryQuestions`,
   },
-  student: {},
+  student: {
+    register: `${user}/registerStudent`,
+    login: `${user}/loginStudent`,
+  },
 };

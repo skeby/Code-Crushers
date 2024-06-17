@@ -24,10 +24,11 @@ import { useState } from "react";
 const NavBar = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const { hasStarted, hasFinished } = useAppSelector((state) => state.ui);
   const isMobile = useMediaQuery("(max-width: 640px)");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const isStudent = user?.role === "Student";
+  const isStudent = user?.role === "student";
 
   const handleLogout = () => {
     dispatch(clearUser());
@@ -38,7 +39,7 @@ const NavBar = () => {
       <div className="flex flex-row lg:px-12 h-full px-5 py-2 items-center justify-between w-full border-b overflow-x-auto overflow-y-hidden dark:border-secondary border-primary gap-x-1">
         {/* TODO: Find a way to always show the logo even when the menu is open on mobile */}
         {(!isMenuOpen || !isMobile) && <Logo />}
-        {(isMenuOpen || !isMobile) && (
+        {(isMenuOpen || !isMobile) && !(hasStarted && !hasFinished) && (
           <NavigationMenu className="">
             <NavigationMenuList className="flex items-center sm:gap-x-2 gap-x-0.5 !p-0">
               {(isStudent ? studentPages : teacherPages).map((page, i) => (
@@ -91,7 +92,7 @@ const NavBar = () => {
                             alt="@skeby"
                             className="w-full h-full"
                           />
-                          <AvatarFallback className="font-medium">
+                          <AvatarFallback className="font-medium capitalize">
                             {user?.firstName[0].concat(user?.lastName[0])}
                           </AvatarFallback>
                         </Avatar>
@@ -99,7 +100,7 @@ const NavBar = () => {
                           <h4 className="font-medium">
                             {user?.firstName} {user?.lastName}
                           </h4>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-muted-foreground capitalize">
                             {user?.role}
                           </p>
                         </div>
