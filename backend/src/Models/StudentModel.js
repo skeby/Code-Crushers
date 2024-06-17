@@ -20,8 +20,7 @@ const StudentSchema = new mongoose.Schema({
         score: { type: Number }
     }],
     password: {
-        type: String,
-        required: true
+        type: String
     },
     role: {
         type: String,

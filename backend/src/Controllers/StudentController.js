@@ -23,7 +23,6 @@ export const RegisterStudent = async (req, res) => {
         lastName,
         email,
         registeredCourses,
-        password,
         role
     });
     await user.save();

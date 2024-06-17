@@ -24,7 +24,6 @@ export const RegisterTeacher = async (req, res) => {
     lastName,
     email,
     department,
-    password,
     role,
   });
   await user.save();
