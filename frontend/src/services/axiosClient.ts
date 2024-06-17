@@ -1,6 +1,7 @@
 import axios from "axios";
 import { AUTH_TOKEN, USER } from "@/static";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "@/components/ui/use-toast";
 
 console.log("windows_host", window.location.hostname);
 const host = window.location.hostname;
@@ -42,6 +43,11 @@ client.interceptors.request.use(
 
       if (decodedToken.exp && currentTime > decodedToken.exp) {
         removeAuth();
+        toast({
+          title: "Session expired",
+          description: "Please login again",
+          duration: 2000,
+        });
         return Promise.reject("Session expired. Please login again.");
       }
     }
@@ -91,8 +97,8 @@ client.interceptors.response.use(
 
 export default async (needsAuth = true) => {
   if (needsAuth) {
-    client.defaults.headers.Authorization = `Bearer ${localStorage.getItem(
-      AUTH_TOKEN
+    client.defaults.headers.Authorization = `Bearer ${JSON.parse(
+      localStorage.getItem(AUTH_TOKEN) ?? "null"
     )}`;
   }
   return client;

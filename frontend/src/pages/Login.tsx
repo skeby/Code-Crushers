@@ -125,8 +125,11 @@ const Login = () => {
         className="sm:w-[500px] w-full h-full sm:h-auto transition-all sm:block flex-col flex duration-500"
       >
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="student">Student</TabsTrigger>
-          <TabsTrigger value="teacher">Teacher</TabsTrigger>
+          {loginTabs.map((tab, i) => (
+            <TabsTrigger key={i} value={tab.toLowerCase()}>
+              {tab}
+            </TabsTrigger>
+          ))}
         </TabsList>
         {loginTabs.map((tab, i) => (
           <TabsContent key={i} value={tab.toLowerCase()} className="flex-grow">

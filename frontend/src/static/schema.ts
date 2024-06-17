@@ -20,10 +20,24 @@ export const UserLoginSchema = z.object({
     .regex(/(?=.*\d)/, validation.password.number),
 });
 
-export const CreateTestSchema = z.object({
-  startTime: z.string().min(1, validation.required),
-  endTime: z.string().min(1, { message: validation.required }),
+export const CreateTheorySchema = z.object({
+  questionText: z.string().min(1, { message: validation.required }),
+  // TODO: Remove this, course should be prefilled from the queried exams
   course: z.string().min(1, { message: validation.required }),
+  correctAnswer: z.string().min(1, { message: validation.required }),
+});
+
+export const CreateObjectiveSchema = z.object({
+  questionText: z.string().min(1, { message: validation.required }),
+  // TODO: Remove this, course should be prefilled from the queried exams
+  options: z.object({
+    a: z.string().min(1, { message: validation.required }),
+    b: z.string().min(1, { message: validation.required }),
+    c: z.string().min(1, { message: validation.required }),
+    d: z.string().min(1, { message: validation.required }),
+  }),
+  course: z.string().min(1, { message: validation.required }),
+  correctOption: z.string().min(1, { message: validation.required }),
 });
 
 export const CreateExamSchema = z.object({
@@ -33,5 +47,6 @@ export const CreateExamSchema = z.object({
 });
 
 export type UserLoginFields = z.infer<typeof UserLoginSchema>;
-export type CreateTestFields = z.infer<typeof CreateTestSchema>;
 export type CreateExamFields = z.infer<typeof CreateExamSchema>;
+export type CreateTheoryFields = z.infer<typeof CreateTheorySchema>;
+export type CreateObjectiveFields = z.infer<typeof CreateObjectiveSchema>;

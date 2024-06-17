@@ -42,7 +42,7 @@ export const apiCall = async (
     }
 
     const responseData: any = res.data;
-    if (responseData?.status === "success") {
+    if (responseData.error === undefined) {
       //   message.destroy();
       if (method !== "get") {
         toast({
@@ -52,7 +52,7 @@ export const apiCall = async (
       }
       return responseData;
     } else {
-      const errorMessage = responseData.message || "Something went wrong!";
+      const errorMessage = responseData.error || "Something went wrong!";
       if (method !== "get") {
         toast({
           title: errorMessage,

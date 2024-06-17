@@ -28,7 +28,6 @@ interface Props {
 const TimeSelector = ({ onTimeChange }: Props) => {
   const [date, setDate] = useState<Date>();
   const [time, setTime] = useState<string>();
-  console.log(date, time);
 
   // Effect to call onTimeChange when both date and time are set
   useEffect(() => {

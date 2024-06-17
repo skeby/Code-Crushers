@@ -1,3 +1,4 @@
+import { APP_NAME_TWO } from "@/static";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "dark" | "light" | "system";
@@ -23,7 +24,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 export function ThemeProvider({
   children,
   defaultTheme = "system",
-  storageKey = "script-vite-ui-theme",
+  storageKey = `${APP_NAME_TWO}-vite-ui-theme`,
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
