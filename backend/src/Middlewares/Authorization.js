@@ -3,7 +3,7 @@ import Teacher from "../Models/TeacherModel.js";
 import dotenv from "dotenv";
 dotenv.config();
 
-const authMiddleware = async (req, res, next) => {
+export const authMiddleware = async (req, res, next) => {
   try {
     const authorizationHeader = req.headers.authorization;
     if (!authorizationHeader) {
