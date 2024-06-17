@@ -42,3 +42,33 @@ export const createObjectiveQuestion = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const GetObjectiveById = async (req, res) => {
+    try {
+        const objectiveId = req.params.objectiveId; 
+  
+        const Objective= await ObjectiveQuestion.findById(objectiveId);
+        if (!Objective) {
+            return res.status(404).json({ message: 'Objective not found' });
+        }
+        res.status(200).json(Objective);
+    } catch (error) {
+        console.error('Error fetching Objective by ID:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+  };
+  
+  
+  export const GetAllObjectives = async (req, res) => {
+    try {
+        const Objectives = await ObjectiveQuestion.find();
+  
+        if (Objectives.length === 0) {
+            return res.status(404).json({ message: 'No Objectives found' });
+        }
+        res.status(200).json(Objectives);
+    } catch (error) {
+        console.error('Error fetching all Objectives:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+  };

@@ -48,6 +48,12 @@ export const submitObjectiveAnswer = async (req, res) => {
             });
         }
         exam.objectiveQuestions.push(questionId);
+        
+         // Add student to the exam's students array if not already added
+         if (!exam.student.includes(studentId)) {
+            exam.student.push(studentId);
+        }
+        await exam.save();
         await student.save();
         const totalPossibleObjectiveScore = 50;
         const totalObjectiveScore = student.scores
