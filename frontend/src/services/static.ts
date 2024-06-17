@@ -13,5 +13,10 @@ export const paths = {
   student: {
     register: `${user}/registerStudent`,
     login: `${user}/loginStudent`,
+    getExamById: `${user}/getExamById`,
+    answerObjective: `${user}/answerObjective`,
+    answerTheory: `${user}/answerTheory`,
+    getObjectiveById: `${user}/getObjectiveById`,
+    getTheoryById: `${user}/getTheoryById`,
   },
 };

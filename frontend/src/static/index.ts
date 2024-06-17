@@ -10,7 +10,7 @@ export const AUTH_TOKEN = `${APP_NAME_TWO}-auth-token${
 export const USER = `${APP_NAME_TWO}-user${isLocal ? "-local" : ""}`;
 
 export const loginTabs = ["Student", "Teacher"];
-export const addQuestionTabs = ["Theory", "Objective"];
+export const questionTabs = ["Theory", "Objective"];
 export const teacherPages = [
   {
     name: "Dashboard",

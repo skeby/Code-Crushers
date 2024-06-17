@@ -12,6 +12,8 @@ import ResultPage from "./pages/student-pages/ResultPage";
 import ErrorPage from "./pages/ErrorPage";
 import ExamOverview from "./pages/student-pages/ExamOverview";
 import TakeExam from "./pages/student-pages/TakeExam";
+import { apiCall } from "./services";
+import { paths } from "./services/static";
 
 export const router = createBrowserRouter([
   { path: "login", element: <Login />, errorElement: <ErrorPage /> },
@@ -60,16 +62,12 @@ export const router = createBrowserRouter([
             path: ":examId",
             element: <TakeExam />,
             loader: ({ params }) => {
-              // TODO: Call API to get the exam
               const { examId } = params;
-              const exam = { examId: "thisissupposedtobetheexamid" };
-              if (examId !== exam.examId) {
-                throw new Response("This exam does not exist.", {
-                  status: 404,
-                  statusText: "Not Found",
-                });
-              }
-              return exam;
+              return apiCall(
+                {},
+                `${paths.student.getExamById}/${examId}`,
+                "get"
+              );
             },
           },
         ],

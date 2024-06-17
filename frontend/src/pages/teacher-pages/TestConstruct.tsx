@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/card";
 import TimeSelector from "@/components/TimeSelector";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { addQuestionTabs, examOptions } from "@/static";
+import { questionTabs, examOptions } from "@/static";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import {
@@ -204,13 +204,13 @@ const TestConstruct = () => {
                     </DialogHeader>
                     <Tabs defaultValue="theory">
                       <TabsList className="grid w-full grid-cols-2 mb-5">
-                        {addQuestionTabs.map((tab, i) => (
+                        {questionTabs.map((tab, i) => (
                           <TabsTrigger key={i} value={tab.toLowerCase()}>
                             {tab}
                           </TabsTrigger>
                         ))}
                       </TabsList>
-                      {addQuestionTabs.map((tab, i) =>
+                      {questionTabs.map((tab, i) =>
                         tab === "Theory" ? (
                           <TabsContent
                             key={i}

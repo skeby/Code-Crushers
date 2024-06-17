@@ -46,11 +46,12 @@ export interface StudentQuestion {
 }
 
 export interface StudentExam {
-  studentId: string;
+  _id: string;
+  course: string;
   startTime: Date;
   endTime: Date;
-  questions: StudentQuestion[];
-  answers: StudentAnswer[];
+  objectiveQuestions: string[];
+  theoryQuestions: string[];
 }
 
 export interface StudentAnswer {
