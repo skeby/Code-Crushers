@@ -1,12 +1,18 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { User, Role } from "@/types";
 import { AUTH_TOKEN, USER } from "@/static";
+import { RefetchOptions, QueryObserverResult } from "@tanstack/react-query";
 // import { jwtDecode } from "jwt-decode";
+
+type Refetch = (
+  options?: RefetchOptions | undefined
+) => Promise<QueryObserverResult<any, Error>>;
 
 interface AuthState {
   user: User<Role> | null;
   isAuthenticated: boolean;
   // hasOnboarded: boolean;
+  refetch: Refetch;
   error: string | null;
 }
 
@@ -49,6 +55,7 @@ const initialState: AuthState = {
   // },
   // isAuthenticated: true,
   // hasOnboarded: false,
+  refetch: () => Promise.resolve({} as QueryObserverResult<any, Error>),
   error: null,
 };
 
@@ -71,8 +78,11 @@ const authSlice = createSlice({
       if (user) localStorage.removeItem(USER);
       if (token) localStorage.removeItem(AUTH_TOKEN);
     },
+    setRefetch: (state, action: PayloadAction<Refetch>) => {
+      state.refetch = action.payload;
+    },
   },
 });
 
 export default authSlice.reducer;
-export const { setUser, clearUser } = authSlice.actions;
+export const { setUser, clearUser, setRefetch } = authSlice.actions;

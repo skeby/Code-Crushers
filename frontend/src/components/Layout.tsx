@@ -1,9 +1,22 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import NavBar from "./shared/NavBar";
 import { APP_NAME } from "@/static";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/state/store";
+import { setHasFinished } from "@/state/slices/uiSlice";
 
 const Layout = () => {
+  const location = useLocation();
+  const dispatch = useAppDispatch();
+  const { hasStarted } = useAppSelector((state) => state.ui);
+  useEffect(() => {
+    if (hasStarted && !location.pathname.includes("/student/exam/")) {
+      true;
+      dispatch(setHasFinished(true));
+    }
+  }, [hasStarted, location.pathname]);
+
   return (
     <div className="">
       <div className="min-h-screen relative flex flex-col">
@@ -13,7 +26,7 @@ const Layout = () => {
         <main className="flex-grow lg:p-12 p-5 max-w-[1200px] w-full mx-auto">
           <Outlet />
         </main>
-        <footer className="sticky dark:bg-white bg-black bottom-0 text-center lg:px-12 py-2 p-5 border-t dark:border-white border-black text-secondary">
+        <footer className="sticky bg-secondary bottom-0 text-center lg:px-12 py-2 p-5 border-t text-primary">
           <p className="font-semibold">
             © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
           </p>

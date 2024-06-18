@@ -1,7 +1,7 @@
 export type Role = "student" | "teacher";
 
 export interface User<T extends Role> {
-  id: number;
+  id: string;
   email: string;
   firstName: string;
   lastName: string;
