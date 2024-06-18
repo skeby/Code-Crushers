@@ -9,6 +9,8 @@ export const paths = {
     createExam: `${user}/createExam`,
     addTheoryQuestions: `${user}/addTheoryQuestions`,
     getAllStudents: `${user}/getAllStudents`,
+    getTeacherById: `${user}/getTeacherById`,
+    getExamById: `${user}/getExamById`,
   },
   student: {
     register: `${user}/registerStudent`,
@@ -18,5 +20,6 @@ export const paths = {
     answerTheory: `${user}/answerTheory`,
     getObjectiveById: `${user}/getObjectiveById`,
     getTheoryById: `${user}/getTheoryById`,
+    getStudentById: `${user}/getStudentById`,
   },
 };

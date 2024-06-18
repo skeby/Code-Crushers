@@ -52,11 +52,32 @@ import {
 } from "@/components/ui/select";
 
 const TestConstruct = () => {
+  const { user } = useAppSelector((state) => state.auth);
+  const { createdExams } = user as User<"teacher">;
   const [openedExam, setOpenedExam] = useState<string | null>(null);
+  // const [currentFetchedExam, setCurrentFetchedExam] = useState<string | null>(
+  //   createdExams?.[0]
+  // );
+  const { refetch } = useAppSelector((state) => state.auth);
+  // const {} = useQuery({
+  //   queryKey: [currentFetchedExam],
+  //   queryFn: () =>
+  //     apiCall(
+  //       {},
+  //       `${paths.teacher.getExamById}/${currentFetchedExam}`,
+  //       "get"
+  //     ).then(() =>
+  //       setCurrentFetchedExam(
+  //         (prev) => createdExams?.[createdExams?.findIndex((c) => c === prev)]
+  //       )
+  //     ),
+  //   enabled: false,
+  // });
   const { mutate: createExam, isPending: isCreateExamPending } = useMutation({
     mutationFn: (data: CreateExamFields) =>
       apiCall({ ...data, creator: user?.id }, paths.teacher.createExam, "post"),
     onSuccess: () => {
+      refetch();
       resetCreateExamForm({
         course: "",
       });
@@ -72,6 +93,7 @@ const TestConstruct = () => {
           "post"
         ),
       onSuccess: () => {
+        refetch();
         resetCreateTheoryForm({
           questionText: "",
           course: "",
@@ -89,6 +111,7 @@ const TestConstruct = () => {
           "post"
         ),
       onSuccess: () => {
+        refetch();
         resetCreateObjectiveForm({
           questionText: "",
           course: "",
@@ -133,10 +156,6 @@ const TestConstruct = () => {
       },
     },
   });
-
-  const { user } = useAppSelector((state) => state.auth);
-
-  const { createdExams } = user as User<"teacher">;
 
   const {
     handleSubmit: handleCreateExamFormSubmit,

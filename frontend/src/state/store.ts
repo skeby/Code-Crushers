@@ -8,6 +8,13 @@ export const store = configureStore({
     auth: authReducer,
     ui: uiReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ["auth/setRefetch"],
+        ignoredPaths: ["auth.refetch"],
+      },
+    }),
 });
 
 export const useAppDispatch: () => typeof store.dispatch = useDispatch;

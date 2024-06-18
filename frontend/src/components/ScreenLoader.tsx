@@ -14,9 +14,9 @@ const ScreenLoader = ({ loading }: Props) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className={`fixed left-0 top-0 h-screen w-full !bg-white z-[999] flex cursor-progress items-center justify-center`}
+          className={`fixed left-0 top-0 h-screen w-full !bg-background z-[999] flex cursor-progress items-center justify-center`}
         >
-          <Loader className="animate-spin" />
+          <Loader className="animate-spin text-primary" />
         </motion.div>
       ) : null}
     </AnimatePresence>

@@ -1,15 +1,16 @@
 import CountDown from "@/components/Countdown";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import ScreenLoader from "@/components/ScreenLoader";
+// import {
+//   AlertDialog,
+//   AlertDialogAction,
+//   AlertDialogCancel,
+//   AlertDialogContent,
+//   AlertDialogDescription,
+//   AlertDialogFooter,
+//   AlertDialogHeader,
+//   AlertDialogTitle,
+//   AlertDialogTrigger,
+// } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,6 +20,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
@@ -27,15 +29,40 @@ import { paths } from "@/services/static";
 import { setHasFinished, setHasStarted } from "@/state/slices/uiSlice";
 import { useAppDispatch, useAppSelector } from "@/state/store";
 import { questionTabs } from "@/static";
-import { exam } from "@/static/sample";
-import { StudentAnswer, StudentExam, StudentQuestion } from "@/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { StudentExam } from "@/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useLoaderData, useLocation } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
+
+interface AnswerTheoryRequest {
+  questionId: string;
+  answerText: string;
+  studentId: string;
+  examId: string;
+  course: string;
+}
+
+interface AnswerObjectiveRequest {
+  questionId: string;
+  selectedOption: string;
+  examId: string;
+  studentId: string;
+  course: string;
+}
 
 const ExamPage = () => {
-  const { questions } = exam;
+  const { toast } = useToast();
+  // React Router Loader
   const data = useLoaderData() as StudentExam;
+  if (!data) {
+    const message = "This exam does not exist.";
+    toast({
+      title: message,
+      description: "Ensure to use to right exam id.",
+      duration: 6000,
+    });
+    throw new Error(message);
+  }
   const {
     _id: id,
     course,
@@ -44,67 +71,90 @@ const ExamPage = () => {
     objectiveQuestions,
     theoryQuestions,
   } = data;
-  const [currentTheoryQuestion, setCurrentTheoryQuestion] = useState(
-    theoryQuestions[0]
-  );
-  const [currentObjectiveQuestion, setCurrentObjectiveQuestion] = useState(
-    objectiveQuestions[0]
-  );
-  const queryClient = useQueryClient();
-  const { mutate, isPending } = useMutation({
-    mutationFn: (data) => apiCall(data, paths.student.answerObjective, "post"),
+
+  // React States
+  const [currentTheoryQuestion, setCurrentTheoryQuestion] = useState<
+    string | null
+  >(theoryQuestions[0]);
+  const [currentObjectiveQuestion, setCurrentObjectiveQuestion] = useState<
+    string | null
+  >(objectiveQuestions[0]);
+  const [currentTheoryAnswer, setCurrentTheoryAnswer] = useState("");
+  const [currentObjectiveAnswer, setCurrentObjectiveAnswer] = useState("");
+
+  // React Query Mutations/Queries
+  const { mutate: postObjective, isPending: objectivePending } = useMutation({
+    mutationFn: (data: AnswerObjectiveRequest) =>
+      apiCall(data, paths.student.answerObjective, "post"),
     onSuccess: () => {
-      setCurrentObjectiveQuestion(
-        objectiveQuestions[currentObjectiveIndex + 1]
-      );
+      if (currentObjectiveIndex < objectiveQuestions.length - 1) {
+        setCurrentObjectiveQuestion(
+          objectiveQuestions[currentObjectiveIndex + 1]
+        );
+      } else {
+        if (!currentTheoryQuestion) dispatch(setHasFinished(true));
+        setCurrentObjectiveQuestion(null);
+      }
     },
   });
-  console.log(mutate, isPending);
+
+  const { mutate: postTheory, isPending: theoryPending } = useMutation({
+    mutationFn: (data: AnswerTheoryRequest) =>
+      apiCall(data, paths.student.answerTheory, "post"),
+    onSuccess: () => {
+      if (currentTheoryIndex < theoryQuestions.length - 1) {
+        setCurrentTheoryQuestion(theoryQuestions[currentTheoryIndex + 1]);
+      } else {
+        if (!currentObjectiveQuestion) dispatch(setHasFinished(true));
+        setCurrentTheoryQuestion(null);
+      }
+    },
+  });
+
   const {
     data: objective,
-    isLoading,
-    isFetching,
+    isLoading: objectiveLoading,
+    isFetching: objectiveFetching,
     refetch,
   } = useQuery({
-    queryKey: ["objective"],
+    queryKey: [currentObjectiveQuestion],
     queryFn: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["objective"],
-      });
-      return apiCall(
-        {},
-        `${paths.student.getObjectiveById}/${currentObjectiveQuestion}`,
-        "get"
-      );
+      if (currentObjectiveQuestion !== undefined)
+        return apiCall(
+          {},
+          `${paths.student.getObjectiveById}/${currentObjectiveQuestion}`,
+          "get"
+        );
     },
-    enabled: false,
   });
-  console.log(objective, isLoading, isFetching);
-  const location = useLocation();
+
+  const {
+    data: theory,
+    isLoading: theoryLoading,
+    isFetching: theoryFetching,
+    refetch: refetchTheory,
+  } = useQuery({
+    queryKey: [currentTheoryQuestion],
+    queryFn: () => {
+      if (currentTheoryQuestion !== undefined)
+        return apiCall(
+          {},
+          `${paths.student.getTheoryById}/${currentTheoryQuestion}`,
+          "get"
+        );
+    },
+  });
+
+  // console.log(theory);
   const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
+  const { hasStarted, hasFinished } = useAppSelector((state) => state.ui);
   const startTimeDate = new Date(startTime);
   const endTimeDate = new Date(endTime);
-  const { hasStarted, hasFinished } = useAppSelector((state) => state.ui);
-  const { toast } = useToast();
   const [countdownTime, setCountDownTime] = useState(
     Math.floor((endTimeDate.getTime() - startTimeDate.getTime()) / 1000)
   );
-  const [currentQuestion, setCurrentQuestion] = useState<StudentQuestion>(
-    questions[0]
-  );
 
-  console.log(currentQuestion, setCurrentQuestion);
-  const [answers, setAnswers] = useState<StudentAnswer[]>(
-    questions.map((question) => ({ questionId: question.id, answer: "" }))
-  );
-
-  if (!data) {
-    throw new Error("This exam does not exist.");
-  }
-
-  const currentIndex = questions.findIndex(
-    (question) => question === currentQuestion
-  );
   const currentTheoryIndex = theoryQuestions.findIndex(
     (question) => question === currentTheoryQuestion
   );
@@ -125,62 +175,55 @@ const ExamPage = () => {
       ? `Date: ${formatDate(startTimeDate)}`
       : `Date: ${formatDate(startTimeDate)} - ${formatDate(endTimeDate)}`;
 
-  const handleNextClick = <T extends any[]>(
-    questions: T,
-    currentIndex: number,
-    setCurrentQuestion: React.Dispatch<React.SetStateAction<T[number]>>
-  ) => {
-    if (currentIndex + 1 >= questions.length) {
-      handleSubmit();
-    } else {
-      setCurrentQuestion(questions[currentIndex + 1]);
-    }
-  };
-  // const handlePreviousClick = <T extends any[]>(
-  //   questions: T,
-  //   currentIndex: number,
-  //   setCurrentQuestion: React.Dispatch<React.SetStateAction<T[number]>>
-  // ) => {
-  //   if (currentIndex - 1 < 0) {
-  //     return;
-  //   }
-  //   setCurrentQuestion(questions[currentIndex - 1]);
-  // };
-
-  const handleAnswerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newAnswers = [...answers];
-    newAnswers[currentIndex].answer = e.target.value;
-    setAnswers(newAnswers);
-  };
-
   const handleSubmit = () => {
-    //the students email or id
-    // the course name
-    // time of exam start
-    //time of exam end
-    // array of the answers
-
-    dispatch(setHasFinished(true));
     setCountDownTime(0);
-    console.log(answers);
   };
 
   useEffect(() => {
-    if (location.pathname !== `/student/exam/${id}`) {
+    if (hasFinished) {
       handleSubmit();
     }
-  }, [location.pathname]);
+  }, [hasFinished]);
 
   useEffect(() => {
-    refetch();
+    if (currentObjectiveIndex > 0) {
+      refetch();
+    }
   }, [currentObjectiveIndex]);
+
+  useEffect(() => {
+    if (currentTheoryIndex > 0) {
+      refetchTheory();
+    }
+  }, [currentTheoryIndex]);
 
   return (
     <div className="flex flex-col items-center gap-y-9">
+      <ScreenLoader
+        loading={
+          theoryLoading ||
+          theoryFetching ||
+          theoryPending ||
+          objectiveLoading ||
+          objectiveFetching ||
+          objectivePending
+        }
+      />
       {!hasFinished ? (
-        <div className="flex items-center flex-col justify-center">
-          <p>{displayDate}</p>
-          <p className="mr-2">
+        <div className="w-full flex-col text-center flex max-w-[600px] gap-y-1">
+          <div className="flex items-center sm:flex-row flex-col gap-1  justify-center">
+            <p className="px-3 py-1 w-full rounded-lg bg-secondary">
+              {displayDate}
+            </p>
+
+            <p className="px-3 py-1 w-full rounded-lg bg-secondary">
+              Objective: {objectiveQuestions.length}
+            </p>
+            <p className="px-3 py-1 w-full rounded-lg bg-secondary">
+              Theory: {theoryQuestions.length}
+            </p>
+          </div>
+          <p className="px-3 py-1 w-full rounded-lg bg-secondary">
             {!hasStarted ? "Time:" : "Time Left:"}{" "}
             <CountDown
               startCountdown={hasStarted}
@@ -192,7 +235,7 @@ const ExamPage = () => {
                   description: "The exam has ended.",
                   duration: 3000,
                 });
-                handleSubmit();
+                dispatch(setHasFinished(true));
               }}
             />
           </p>
@@ -200,7 +243,7 @@ const ExamPage = () => {
       ) : (
         <div>Exam completed</div>
       )}
-      <div className="flex items-center gap-x-5">
+      <div className="flex items-center flex-col gap-y-5">
         <p>{course.toUpperCase()}</p>
         {!hasStarted && (
           <Button
@@ -237,37 +280,80 @@ const ExamPage = () => {
             >
               <Card className="h-full w-full sm:h-auto transition-all sm:block flex-col flex duration-500">
                 <CardHeader>
-                  <CardTitle>
-                    Question{" "}
-                    {tab === "Theory"
-                      ? currentTheoryIndex + 1
-                      : currentObjectiveIndex + 1}
-                  </CardTitle>
+                  {((tab === "Theory" && theoryQuestions.length > 0) ||
+                    (tab === "Objective" && objectiveQuestions.length > 0)) && (
+                    <CardTitle>
+                      Question{" "}
+                      {tab === "Theory"
+                        ? currentTheoryIndex + 1
+                        : currentObjectiveIndex + 1}
+                    </CardTitle>
+                  )}
                   {/* <CardDescription>Some description</CardDescription> */}
                 </CardHeader>
                 {tab === "Theory" ? (
-                  objectiveQuestions.length > 0 ? (
-                    <CardContent className="flex flex-col gap-y-5">
-                      <p>{currentQuestion.text}</p>
+                  theoryQuestions.length > 0 ? (
+                    <CardContent>
                       <div className="grid w-full gap-y-2.5">
-                        <Label htmlFor="message">Answer</Label>
+                        <Label>{theory?.question}</Label>
                         <Textarea
-                          value={answers[currentIndex].answer}
-                          onChange={handleAnswerChange}
+                          // value={answers[currentIndex].answer}
+                          value={currentTheoryAnswer}
+                          onChange={(e) => {
+                            setCurrentTheoryAnswer(e.target.value);
+                          }}
                           placeholder="Enter your answer here"
                         />
                       </div>
                     </CardContent>
                   ) : (
-                    <p>No theory questions available</p>
+                    <p className="text-center">No theory questions available</p>
                   )
                 ) : objectiveQuestions.length > 0 ? (
-                  <CardContent className="flex flex-col gap-y-5"></CardContent>
+                  <CardContent className="flex flex-col gap-y-5">
+                    <Label>{objective.question}</Label>
+                    <RadioGroup
+                      onValueChange={(value) => {
+                        setCurrentObjectiveAnswer(value);
+                      }}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem
+                          value={objective?.options.a}
+                          id="option-a"
+                        />
+                        <Label htmlFor="option-a">{objective?.options.a}</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem
+                          value={objective?.options.b}
+                          id="option-b"
+                        />
+                        <Label htmlFor="option-b">{objective?.options.b}</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem
+                          value={objective?.options.c}
+                          id="option-c"
+                        />
+                        <Label htmlFor="option-c">{objective?.options.c}</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem
+                          value={objective?.options.d}
+                          id="option-d"
+                        />
+                        <Label htmlFor="option-d">{objective?.options.d}</Label>
+                      </div>
+                    </RadioGroup>
+                  </CardContent>
                 ) : (
                   <p>No objective questions available</p>
                 )}
-                <CardFooter className="flex-grow gap-x-2 items-end sm:items-center">
-                  {/* <Button
+                {((tab === "Theory" && theoryQuestions.length > 0) ||
+                  (tab === "Objective" && objectiveQuestions.length > 0)) && (
+                  <CardFooter className="flex-grow gap-x-2 items-end sm:items-center">
+                    {/* <Button
                     className="w-full"
                     form={"answer-form"}
                     variant={"outline"}
@@ -290,73 +376,39 @@ const ExamPage = () => {
                   >
                     Previous
                   </Button> */}
-                  {currentIndex + 1 < questions.length ? (
                     <Button
                       className="w-full"
                       form={"answer-form"}
                       onClick={() => {
                         if (tab === "Theory") {
-                          handleNextClick(
-                            theoryQuestions,
-                            currentTheoryIndex,
-                            setCurrentTheoryQuestion
-                          );
-                        } else {
-                          handleNextClick(
-                            objectiveQuestions,
-                            currentObjectiveIndex,
-                            setCurrentObjectiveQuestion
-                          );
+                          if (currentTheoryQuestion !== null) {
+                            postTheory({
+                              course,
+                              questionId: currentTheoryQuestion,
+                              answerText: currentTheoryAnswer,
+                              studentId: user?.id as string,
+                              examId: id,
+                            });
+                            setCurrentTheoryAnswer("");
+                          }
+                        } else if (tab === "Objective") {
+                          if (currentObjectiveQuestion !== null) {
+                            postObjective({
+                              course,
+                              questionId: currentObjectiveQuestion,
+                              selectedOption: currentObjectiveAnswer,
+                              studentId: user?.id as string,
+                              examId: id,
+                            });
+                            setCurrentObjectiveAnswer("");
+                          }
                         }
                       }}
                     >
                       Next
                     </Button>
-                  ) : (
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button className="w-full" form={"answer-form"}>
-                          Submit
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            {countdownTime > 0
-                              ? "Are you sure you want to submit?"
-                              : "Time is up and exam has been submitted. Click the button below to close the dialog."}
-                          </AlertDialogTitle>
-                          <AlertDialogDescription className="flex flex-col">
-                            {countdownTime > 0 && (
-                              <span>
-                                You have{" "}
-                                <CountDown
-                                  startCountdown={hasStarted}
-                                  time={countdownTime}
-                                />{" "}
-                                left.
-                              </span>
-                            )}
-                            {countdownTime > 0 &&
-                              answers.filter(
-                                (answer) => answer.answer.trim() === ""
-                              ).length > 0 && (
-                                <span>You have not answered all questions</span>
-                              )}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          {countdownTime > 0 && (
-                            <AlertDialogAction onClick={() => handleSubmit()}>
-                              Continue
-                            </AlertDialogAction>
-                          )}
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  )}
-                </CardFooter>
+                  </CardFooter>
+                )}
               </Card>
             </TabsContent>
           ))}
@@ -367,3 +419,70 @@ const ExamPage = () => {
 };
 
 export default ExamPage;
+
+// {
+//   (tab === "Theory" ? currentTheoryIndex : currentObjectiveIndex) + 1 <
+//   (tab === "Theory" ? theoryQuestions : objectiveQuestions).length ? (
+//     <Button
+//       className="w-full"
+//       form={"answer-form"}
+//       onClick={() => {
+//         if (tab === "Theory") {
+//           handleNextClick();
+//           postTheory({
+//             course,
+//             questionId: currentTheoryQuestion,
+//             answerText: currentTheoryAnswer,
+//             studentId: user?.id as string,
+//             examId: id,
+//           });
+//           setCurrentTheoryAnswer("");
+//         } else {
+//           handleNextClick();
+//         }
+//       }}
+//     >
+//       Next
+//     </Button>
+//   ) : (
+//     <AlertDialog>
+//       <AlertDialogTrigger asChild>
+//         <Button className="w-full" form={"answer-form"}>
+//           Submit
+//         </Button>
+//       </AlertDialogTrigger>
+//       <AlertDialogContent>
+//         <AlertDialogHeader>
+//           <AlertDialogTitle>
+//             {countdownTime > 0
+//               ? "Are you sure you want to submit?"
+//               : "Time is up and exam has been submitted. Click the button below to close the dialog."}
+//           </AlertDialogTitle>
+//           <AlertDialogDescription className="flex flex-col">
+//             {countdownTime > 0 && (
+//               <span>
+//                 You have{" "}
+//                 <CountDown startCountdown={hasStarted} time={countdownTime} />{" "}
+//                 left.
+//               </span>
+//             )}
+//             {/* {countdownTime > 0 &&
+//             answers.filter(
+//               (answer) => answer.answer.trim() === ""
+//             ).length > 0 && (
+//               <span>You have not answered all questions</span>
+//             )} */}
+//           </AlertDialogDescription>
+//         </AlertDialogHeader>
+//         <AlertDialogFooter>
+//           <AlertDialogCancel>Cancel</AlertDialogCancel>
+//           {countdownTime > 0 && (
+//             <AlertDialogAction onClick={() => handleSubmit()}>
+//               Continue
+//             </AlertDialogAction>
+//           )}
+//         </AlertDialogFooter>
+//       </AlertDialogContent>
+//     </AlertDialog>
+//   );
+// }
