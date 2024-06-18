@@ -14,7 +14,6 @@ export const createObjectiveQuestion = async (req, res) => {
         if (existingQuestion) {
             return res.status(400).json({ message: 'This question already exists in this exam' });
         }
-
         const newQuestion = new ObjectiveQuestion({
             questionType: 'objective',
             examId,
@@ -42,7 +41,6 @@ export const createObjectiveQuestion = async (req, res) => {
         }
         teacher.createdExams.push(exam._id);
         await teacher.save();
-
         res.status(201).json({ message: 'Objective question uploaded successfully!', savedQuestion });
     } catch (error) {
         res.status(500).json({ message: error.message });
