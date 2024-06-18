@@ -1,16 +1,5 @@
 import CountDown from "@/components/Countdown";
 import ScreenLoader from "@/components/ScreenLoader";
-// import {
-//   AlertDialog,
-//   AlertDialogAction,
-//   AlertDialogCancel,
-//   AlertDialogContent,
-//   AlertDialogDescription,
-//   AlertDialogFooter,
-//   AlertDialogHeader,
-//   AlertDialogTitle,
-//   AlertDialogTrigger,
-// } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -58,10 +47,10 @@ const ExamPage = () => {
     const message = "This exam does not exist.";
     toast({
       title: message,
-      description: "Ensure to use to right exam id.",
-      duration: 6000,
+      description: "Ensure to use to right exam id given by the teacher.",
+      duration: 3000,
     });
-    throw new Error(message);
+    history.back();
   }
   const {
     _id: id,
@@ -123,7 +112,7 @@ const ExamPage = () => {
     data: objective,
     isLoading: objectiveLoading,
     isFetching: objectiveFetching,
-    refetch,
+    refetch: refetchObjective,
   } = useQuery({
     queryKey: [currentObjectiveQuestion],
     queryFn: () => {
@@ -201,7 +190,7 @@ const ExamPage = () => {
 
   useEffect(() => {
     if (currentObjectiveIndex > 0) {
-      refetch();
+      refetchObjective();
     }
   }, [currentObjectiveIndex]);
 
@@ -338,19 +327,27 @@ const ExamPage = () => {
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="a" id="option-a" />
-                        <Label htmlFor="option-a">{objective?.options.a}</Label>
+                        <Label htmlFor="option-a">
+                          {objective?.options?.a}
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="b" id="option-b" />
-                        <Label htmlFor="option-b">{objective?.options.b}</Label>
+                        <Label htmlFor="option-b">
+                          {objective?.options?.b}
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="c" id="option-c" />
-                        <Label htmlFor="option-c">{objective?.options.c}</Label>
+                        <Label htmlFor="option-c">
+                          {objective?.options?.c}
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="d" id="option-d" />
-                        <Label htmlFor="option-d">{objective?.options.d}</Label>
+                        <Label htmlFor="option-d">
+                          {objective?.options?.d}
+                        </Label>
                       </div>
                     </RadioGroup>
                   </CardContent>

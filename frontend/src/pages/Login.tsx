@@ -116,7 +116,7 @@ const Login = () => {
   return (
     <div className="max-h-screen p-5 sm:p-0 h-screen flex flex-col gap-y-4 items-center justify-center">
       <div className="self-start sm:self-auto">
-        <Logo />
+        <Logo size="lg" />
       </div>
       <Tabs
         defaultValue="student"

@@ -57,7 +57,9 @@ export const apiCall = async (
       }
       return responseData;
     } else {
-      const errorMessage = responseData.error || "Something went wrong!";
+      const errorMessage =
+        `${responseData.error ?? ""} ${responseData.message}` ||
+        "Something went wrong!";
       if (method !== "get") {
         toast({
           title: errorMessage,

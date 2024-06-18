@@ -5,28 +5,40 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Card, CardHeader } from "@/components/ui/card";
+import { useAppSelector } from "@/state/store";
 import { results } from "@/static/sample";
+import { useEffect } from "react";
 
 const ResultsPage = () => {
-  return (
+  const { user, refetchUser } = useAppSelector((state) => state.auth);
+  useEffect(() => {
+    refetchUser();
+  }, []);
+  console.log(user?.takenExams);
+  return user?.takenExams && user?.takenExams?.length > 0 ? (
     <Accordion type="single" collapsible className="w-full">
-      {results.map((result, i) => (
-        <AccordionItem key={i} value={result.title.toLowerCase()}>
+      {user.takenExams.map((exam, i) => (
+        <AccordionItem key={i} value={exam.examId}>
           <AccordionTrigger className="!no-underline">
             <div className="flex flex-col gap-y-1 text-start">
-              <p>{result.title}</p>
+              <p>{exam.course.toUpperCase()}</p>
               <p className="text-sm text-slate-500 dark:text-slate-400 font-normal">
                 <span>Total Score: </span>
-                <span>{result.totalScore}</span>
+                <span>{exam.score}</span>
               </p>
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <ResultTable data={result.questions} />
+            <ResultTable data={results[0].questions} />
           </AccordionContent>
         </AccordionItem>
       ))}
     </Accordion>
+  ) : (
+    <Card>
+      <CardHeader className="text-center">No Exam Results Available</CardHeader>
+    </Card>
   );
 };
 

@@ -60,7 +60,6 @@ const fetchExamDetails = async (examId: string | null) => {
     `${paths.teacher.getExamById}/${examId}`,
     "get"
   );
-  console.log(response);
   return response;
 };
 
@@ -72,7 +71,7 @@ const TestConstruct = () => {
   // const [currentFetchedExam, setCurrentFetchedExam] = useState<string | null>(
   //   createdExams?.[0]
   // );
-  const { refetch } = useAppSelector((state) => state.auth);
+  const { refetchUser } = useAppSelector((state) => state.auth);
   const examDetailsQueries = createdExams
     ? useQueries({
         queries: createdExams.map((createdExam) => ({
@@ -89,7 +88,7 @@ const TestConstruct = () => {
     mutationFn: (data: CreateExamFields) =>
       apiCall({ ...data, creator: user?.id }, paths.teacher.createExam, "post"),
     onSuccess: () => {
-      refetch();
+      refetchUser();
       resetCreateExamForm({
         course: "",
       });
@@ -110,7 +109,7 @@ const TestConstruct = () => {
           "post"
         ),
       onSuccess: () => {
-        refetch();
+        refetchUser();
         resetCreateTheoryForm({
           questionText: "",
           correctAnswer: "",
@@ -122,12 +121,12 @@ const TestConstruct = () => {
     useMutation({
       mutationFn: (data: CreateObjectiveFields) =>
         apiCall(
-          { ...data, creator: user?.id, examId: openedExam },
+          { ...data, creator: user?.id, examId: openedExam._id },
           paths.teacher.createObjective,
           "post"
         ),
       onSuccess: () => {
-        refetch();
+        refetchUser();
         resetCreateObjectiveForm({
           questionText: "",
           correctOption: "",
@@ -205,7 +204,7 @@ const TestConstruct = () => {
   };
 
   useEffect(() => {
-    refetch();
+    refetchUser();
   }, []);
 
   return (
@@ -227,18 +226,18 @@ const TestConstruct = () => {
                 <CardHeader className="flex justify-between p-3 gap-4 flex-col w-full">
                   <div>
                     <CardTitle className="text-base mb-1">
-                      {exam?.course.toUpperCase()}
+                      {exam?.course?.toUpperCase()}
                     </CardTitle>
                     <CardDescription className="flex justify-between items-center gap-x-2 leading-4 mb-0.5">
                       Number of Objectives:{" "}
                       <HiglightedText>
-                        {exam?.objectiveQuestions.length}
+                        {exam?.objectiveQuestions?.length}
                       </HiglightedText>
                     </CardDescription>
                     <CardDescription className="flex justify-between items-center gap-x-2 leading-4 mb-0.5">
                       Number of Theory:{" "}
                       <HiglightedText>
-                        {exam?.theoryQuestions.length}
+                        {exam?.theoryQuestions?.length}
                       </HiglightedText>
                     </CardDescription>
                     <CardDescription className="flex justify-between items-center gap-x-2 leading-4 mb-0.5">

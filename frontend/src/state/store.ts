@@ -11,8 +11,8 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ["auth/setRefetch"],
-        ignoredPaths: ["auth.refetch"],
+        ignoredActions: ["auth/setRefetchUser"],
+        ignoredPaths: ["auth.refetchUser"],
       },
     }),
 });

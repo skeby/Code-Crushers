@@ -11,6 +11,7 @@ export const paths = {
     getAllStudents: `${user}/getAllStudents`,
     getTeacherById: `${user}/getTeacherById`,
     getExamById: `${user}/getExamById`,
+    getStudentsByExamId: `${user}/getStudentsByExam`,
   },
   student: {
     register: `${user}/registerStudent`,
