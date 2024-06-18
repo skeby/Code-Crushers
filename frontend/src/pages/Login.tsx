@@ -32,6 +32,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiCall } from "@/services";
 import { paths } from "@/services/static";
 
+
 const Login = () => {
   const { mutate: login, isPending } = useMutation({
     mutationFn: (data: { email: string; password: string; role: Role }) =>
@@ -93,9 +94,11 @@ const Login = () => {
       });
     },
   });
+
   useAuthenticationStatus({ pageType: "public" });
   const dispatch = useAppDispatch();
   const { toast } = useToast();
+
   const form = useForm<UserLoginFields>({
     resolver: zodResolver(UserLoginSchema),
     defaultValues: {
@@ -103,6 +106,7 @@ const Login = () => {
       password: "",
     },
   });
+  
   const { handleSubmit, control } = form;
 
   const onSubmit: SubmitHandler<UserLoginFields> = (data, e) => {
