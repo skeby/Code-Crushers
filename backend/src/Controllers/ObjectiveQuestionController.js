@@ -9,6 +9,11 @@ export const createObjectiveQuestion = async (req, res) => {
         if (!questionText || !options || !correctOption || !course || !examId) {
             return res.status(400).json({ message: 'All fields are required' });
         }
+          
+        const existingQuestion = await ObjectiveQuestion.findOne({ questionText, examId });
+        if (existingQuestion) {
+            return res.status(400).json({ message: 'This question already exists in this exam' });
+        }
 
         const newQuestion = new ObjectiveQuestion({
             questionType: 'objective',
