@@ -1,6 +1,8 @@
+import dotenv from "dotenv";
 import MarkingGuide from "../Models/MarkingGuideModel.js";
 import express from 'express';
 import Replicate from 'replicate';
+dotenv.config();
 
 const replicate = new Replicate({
   auth: process.env.AI_KEY 
@@ -119,7 +121,7 @@ export const getAiResponse = async (req, res) => {
             return res.status(404).json({ message: 'marking guide not found' });
         }
 
-        const marking_guide = marking_guide_req.guide;
+        const marking_guide = marking_guide_req[0].guide;
 
         const result = await evaluateAnswer(guidelines, studentAnswer);
 
