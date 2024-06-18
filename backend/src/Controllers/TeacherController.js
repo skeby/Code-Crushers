@@ -106,7 +106,7 @@ export const GetAllTeachers = async (req, res) => {
   } catch (error) {
 
       console.error('Error fetching all teachers:', error);
-      res.status(500).json({ message: 'Server error',error });
+      res.status(500).json(error.message);
   }
 };
 
