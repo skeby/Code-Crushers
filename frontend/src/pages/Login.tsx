@@ -149,17 +149,10 @@ const Login = () => {
                           name="username"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>
-                                {tab === "Student" ? "Matric" : "Registration"}{" "}
-                                Number
-                              </FormLabel>
+                              <FormLabel>Email address</FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder={`Enter your ${
-                                    tab === "Student"
-                                      ? "matric"
-                                      : "registration"
-                                  } number`}
+                                  placeholder={`Enter your email address`}
                                   {...field}
                                 />
                               </FormControl>
