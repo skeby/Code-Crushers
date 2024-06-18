@@ -33,7 +33,6 @@ export const createObjectiveQuestion = async (req, res) => {
         if(newQuestion.course !== exam.course ){
             return res.status(404).json({ message: 'course does not match the exam course' });
         }
-
         exam.objectiveQuestions.push(savedQuestion._id);
         await exam.save();
 
@@ -41,7 +40,6 @@ export const createObjectiveQuestion = async (req, res) => {
         if (!teacher) {
             return res.status(404).json({ message: 'Teacher not found' });
         }
-
         teacher.createdExams.push(exam._id);
         await teacher.save();
 
