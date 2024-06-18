@@ -79,7 +79,7 @@ export const LoginTeacher = async (req, res) => {
     res.status(200).json({ message: "Login successful", token, teacher });
   } catch (error) {
     console.error("Error during login:", error);
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json(error.message);
   }
 };
 
