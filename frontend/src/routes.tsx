@@ -31,7 +31,7 @@ export const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "teacher/setup-test",
+        path: "teacher/setup-exam",
         element: (
           <TeacherRoute>
             <TestConstruct />

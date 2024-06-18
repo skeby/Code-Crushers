@@ -17,8 +17,8 @@ export const teacherPages = [
     path: "",
   },
   {
-    name: "Setup Test",
-    path: "teacher/setup-test",
+    name: "Setup Exam",
+    path: "teacher/setup-exam",
   },
   {
     name: "Student Overview",
