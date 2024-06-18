@@ -6,7 +6,6 @@ import {authMiddleware} from '../Middlewares/Authorization.js'
 import { GetAllExams, GetExamById, createExam } from '../Controllers/ExamController.js'
 
 const QuestionRouter= express.Router()
-
 QuestionRouter.post('/createExam',authMiddleware, createExam)
 QuestionRouter.post('/createTheory',authMiddleware,createTheoryQuestion )
 QuestionRouter.post('/createObjective',authMiddleware, createObjectiveQuestion );
