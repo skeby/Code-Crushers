@@ -1,5 +1,4 @@
 import express from 'express'
-
 import { GetAllStudents, GetStudentById, LoginStudent, RegisterStudent } from '../Controllers/StudentController.js'
 
 const StudentRouter = express.Router()
