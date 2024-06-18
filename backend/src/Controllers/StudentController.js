@@ -1,4 +1,4 @@
-// import bcrypt from 'bcrypt';
+ import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 import Student from "../Models/StudentModel.js";
 import dotenv from "dotenv";
@@ -24,7 +24,8 @@ export const RegisterStudent = async (req, res) => {
         lastName,
         email,
         registeredCourses,
-        role
+        role,
+        password
     });
     await user.save();
 
@@ -43,43 +44,39 @@ export const RegisterStudent = async (req, res) => {
     }}
 
 export const LoginStudent = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required" });
-    }
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required' });
+        }
+
+        const student = await Student.findOne({ email });
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+        
+        // const isMatch = await bcrypt.compare(password, teacher.password);
+        // if (!isMatch) {
+        //     return res.status(401).json({ message: 'Invalid credentials' });
+        // }
+
+        const token = jwt.sign(
+            { email: student.email, userId: student._id, role: student.role },
+            process.env.SECRET,
+            { expiresIn: "1d" }
+        );
 
         res.status(200).json({ message: 'Login successful', token, student });
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).json({ message: 'Server error', error,message });
     }
-
-    // const isMatch = await bcrypt.compare(password, teacher.password);
-    // if (!isMatch) {
-    //     return res.status(401).json({ message: 'Invalid credentials' });
-    // }
-
-    const token = jwt.sign(
-      { email: student.email, userId: student._id, role: student.role },
-      process.env.SECRET,
-      { expiresIn: "1d" }
-    );
-
-    res.status(200).json({ message: "Login successful", token, student });
-  } catch (error) {
-    console.error("Error during login:", error);
-    res.status(500).json({ message: "Server error" });
-  }
 };
 
 export const GetStudentById = async (req, res) => {
-  try {
-    const studentId = req.params.studentId;
-
+    try {
+        const studentId = req.params.studentId; 
 
         const student = await Student.findById(studentId);
         if (!student) {
@@ -89,18 +86,12 @@ export const GetStudentById = async (req, res) => {
     } catch (error) {
         console.error('Error fetching student by ID:', error);
         res.status(500).json({ message: 'Server error' , error,message});
-
     }
-    res.status(200).json(student);
-  } catch (error) {
-    console.error("Error fetching student by ID:", error);
-    res.status(500).json({ message: "Server error" });
-  }
 };
 
 export const GetAllStudents = async (req, res) => {
-  try {
-    const students = await Student.find();
+    try {
+        const students = await Student.find();
 
         if (students.length === 0) {
             return res.status(404).json({ message: 'No students found' });
@@ -110,9 +101,4 @@ export const GetAllStudents = async (req, res) => {
         console.error('Error fetching all students:', error);
         res.status(500).json({ message: 'Server error' , error,message});
     }
-    res.status(200).json(students);
-  } catch (error) {
-    console.error("Error fetching all students:", error);
-    res.status(500).json({ message: "Server error" });
-  }
 };
