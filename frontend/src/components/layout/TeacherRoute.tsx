@@ -11,7 +11,7 @@ const TeacherRoute = ({ children }: TeacherRouteProps) => {
   // console.log("the user--> "+ JSON.stringify(user))
   const navigate = useNavigate();
 
-  const isTeacher = user?.type === "Teacher";
+  const isTeacher = user?.role === "teacher";
 
   useEffect(() => {
     if (!isTeacher) {

@@ -24,28 +24,30 @@ import { useState } from "react";
 const NavBar = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const { hasStarted, hasFinished } = useAppSelector((state) => state.ui);
   const isMobile = useMediaQuery("(max-width: 640px)");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const isStudent = user?.type === "Student";
+  const isStudent = user?.role === "student";
 
   const handleLogout = () => {
     dispatch(clearUser());
   };
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex flex-row lg:px-12 px-5 py-2 items-center justify-between w-full border-b dark:border-secondary border-primary">
-        <Logo />
-        {(isMenuOpen || !isMobile) && (
-          <NavigationMenu>
-            <NavigationMenuList className="flex items-center sm:gap-x-2 gap-x-0.5">
+    <div className="flex items-center justify-between h-full">
+      <div className="flex flex-row lg:px-12 h-full px-5 py-2 items-center justify-between w-full border-b overflow-x-auto overflow-y-hidden dark:border-secondary border-primary gap-x-1">
+        {/* TODO: Find a way to always show the logo even when the menu is open on mobile */}
+        {(!isMenuOpen || !isMobile) && <Logo />}
+        {(isMenuOpen || !isMobile) && !(hasStarted && !hasFinished) && (
+          <NavigationMenu className="">
+            <NavigationMenuList className="flex items-center sm:gap-x-2 gap-x-0.5 !p-0">
               {(isStudent ? studentPages : teacherPages).map((page, i) => (
                 <NavigationMenuItem key={i}>
                   <NavLink to={page.path}>
                     {({ isActive }) => (
                       <div
-                        className={`h-6 !py-1 !px-2.5 ${navigationMenuTriggerStyle()}${
+                        className={`!h-6 !py-1 !rounded-full !px-2.5 ${navigationMenuTriggerStyle()}${
                           isActive
                             ? " dark:bg-primary bg-primary dark:text-secondary text-secondary"
                             : " bg-transparent"
@@ -83,12 +85,26 @@ const NavBar = () => {
                 <PopoverContent className="w-60" align="end">
                   <div className="grid gap-4">
                     <div className="space-y-2">
-                      <h4 className="font-medium leading-none">
-                        {user?.firstName} {user?.lastName}
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {user?.type}
-                      </p>
+                      <div className="flex items-center gap-x-2">
+                        <Avatar className="relative size-11 sm:size-9">
+                          <AvatarImage
+                            src="https://github.com/skeby.png"
+                            alt="@skeby"
+                            className="w-full h-full"
+                          />
+                          <AvatarFallback className="font-medium capitalize">
+                            {user?.firstName[0].concat(user?.lastName[0])}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col justify-between">
+                          <h4 className="font-medium">
+                            {user?.firstName} {user?.lastName}
+                          </h4>
+                          <p className="text-sm text-muted-foreground capitalize">
+                            {user?.role}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                     <Button onClick={() => handleLogout()} className="h-8">
                       Logout

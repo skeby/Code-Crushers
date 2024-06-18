@@ -17,17 +17,21 @@ import {
 } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { APP_NAME, USER, loginTabs } from "@/static";
+import { APP_NAME, AUTH_TOKEN, loginTabs } from "@/static";
 import Logo from "@/components/Logo";
 import { useAppDispatch } from "@/state/store";
 import { UserLoginFields, UserLoginSchema } from "@/static/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { setUser } from "@/state/slices/authSlice";
-import { User } from "@/types";
-import { useNavigate } from "react-router-dom";
+import { Role } from "@/types";
+// import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import useAuthenticationStatus from "@/hooks/useAuthenticationStatus";
+import { useMutation } from "@tanstack/react-query";
+import { apiCall } from "@/services";
+import { paths } from "@/services/static";
+
 import { useMutation } from "@tanstack/react-query";
 import { apiCall } from "@/services";
 import { paths } from "@/services/static";
@@ -98,7 +102,6 @@ const Login = () => {
   });
   useAuthenticationStatus({ pageType: "public" });
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const form = useForm<UserLoginFields>({
@@ -113,44 +116,11 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<UserLoginFields> = (data, e) => {
     const { id } = e?.target;
-    let user: User<"Student"> | User<"Teacher">;
-    // Simulate API call
-    const { dismiss } = toast({
-      title: "Logging in...",
+    login({
+      password: data.password,
+      email: data.username,
+      role: id === "student-login-form" ? "student" : "teacher",
     });
-    setTimeout(() => {
-      if (id === "student-login-form") {
-        // Call student login API
-        user = {
-          id: 1,
-          email: "akinsanyaadeyinka4166@gmail.com",
-          firstName: "Adeyinka",
-          lastName: "Akinsanya",
-          status: "paid",
-          type: "Student",
-          matricNumber: "21CG029820",
-        };
-      } else if (id === "teacher-login-form") {
-        user = {
-          id: 1,
-          email: "akinsanyaadeyinka4166@gmail.com",
-          firstName: "Adeyinka",
-          lastName: "Akinsanya",
-          status: "free",
-          type: "Teacher",
-          registrationNumber: "21CG029820",
-        };
-      }
-      console.log(data);
-      dispatch(setUser(user));
-      dismiss();
-      toast({
-        title: "Login successful",
-        duration: 2000,
-      });
-      navigate("/");
-      localStorage.setItem(USER, JSON.stringify(user));
-    }, 2000);
   };
   return (
     <div className="max-h-screen p-5 sm:p-0 h-screen flex flex-col gap-y-4 items-center justify-center">
@@ -162,8 +132,11 @@ const Login = () => {
         className="sm:w-[500px] w-full h-full sm:h-auto transition-all sm:block flex-col flex duration-500"
       >
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="student">Student</TabsTrigger>
-          <TabsTrigger value="teacher">Teacher</TabsTrigger>
+          {loginTabs.map((tab, i) => (
+            <TabsTrigger key={i} value={tab.toLowerCase()}>
+              {tab}
+            </TabsTrigger>
+          ))}
         </TabsList>
         {loginTabs.map((tab, i) => (
           <TabsContent key={i} value={tab.toLowerCase()} className="flex-grow">
@@ -213,6 +186,7 @@ const Login = () => {
                               <FormLabel>Password</FormLabel>
                               <FormControl>
                                 <Input
+                                  type="password"
                                   placeholder="Enter your password"
                                   {...field}
                                 />
@@ -228,6 +202,7 @@ const Login = () => {
               </CardContent>
               <CardFooter className="flex-grow items-end sm:items-center">
                 <Button
+                  loading={isPending}
                   type="submit"
                   className="w-full"
                   form={`${tab.toLowerCase()}-login-form`}

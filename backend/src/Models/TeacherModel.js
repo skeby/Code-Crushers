@@ -23,8 +23,7 @@ const TeacherSchema = new mongoose.Schema({
     required: true,
   },
   password:{
-    type: String,
-    required: true
+    type: String
   },
   createdExams: [{ 
     type: mongoose.Schema.Types.ObjectId, ref: 'Exam' }]

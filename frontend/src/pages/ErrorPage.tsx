@@ -26,7 +26,7 @@ const ErrorPage = () => {
   }
   return (
     <div className="max-h-screen p-5 sm:p-0 h-screen flex flex-col items-center justify-center">
-      <Card className="sm:w-[500px] w-full h-full sm:h-auto transition-all sm:block flex-col text-center flex duration-500">
+      <Card className="sm:w-[500px] w-full h-full items-center justify-center sm:h-auto transition-all sm:block flex-col text-center flex duration-500">
         <CardHeader>
           <Logo />
         </CardHeader>

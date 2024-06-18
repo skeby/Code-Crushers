@@ -1,10 +1,12 @@
 import express from 'express'
 
-import { LoginTeacher, RegisterTeacher } from '../Controllers/TeacherController.js'
+import getStudentsByExam, { GetAllTeachers, GetTeacherById, LoginTeacher, RegisterTeacher } from '../Controllers/TeacherController.js'
 
-const router = express.Router()
+const TeacherRouter = express.Router()
 
-router.post('/registerTeacher', RegisterTeacher)
-router.post('/loginTeacher', LoginTeacher );
-
-export default router;
+TeacherRouter.post('/registerTeacher', RegisterTeacher)
+TeacherRouter.post('/loginTeacher', LoginTeacher );
+TeacherRouter.get('/getTeacherById/:teacherId', GetTeacherById)
+TeacherRouter.get('/getAllTeachers', GetAllTeachers)
+TeacherRouter.get('/getStudentsByExam/:examId', getStudentsByExam)
+export default TeacherRouter;

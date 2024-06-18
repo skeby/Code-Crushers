@@ -1,15 +1,25 @@
-export type UserType = "Student" | "Teacher";
+export type Role = "student" | "teacher";
 
-export interface User<T extends UserType> {
-  id: number;
+export interface User<T extends Role> {
+  id: string;
   email: string;
   firstName: string;
   lastName: string;
-  status: string;
-  type: T;
-  exams?: T extends "Student" ? StudentExam[] : never;
-  matricNumber?: T extends "Student" ? string : never;
-  registrationNumber?: T extends "Teacher" ? string : never;
+  role: T;
+  takenExams?: T extends "student" ? TakenExam[] : never;
+  registeredCourses?: T extends "student" ? string[] : never;
+  createdExams?: T extends "teacher" ? CreatedExams : never;
+  department?: T extends "teacher" ? string : never;
+  // matricNumber?: T extends "student" ? string : never;
+  // registrationNumber?: T extends "teacher" ? string : never;
+}
+
+export type CreatedExams = (string | null)[];
+
+export interface TakenExam {
+  examId: string;
+  course: string;
+  score: number;
 }
 
 export type Theme = "dark" | "light" | "system";
@@ -36,11 +46,12 @@ export interface StudentQuestion {
 }
 
 export interface StudentExam {
-  studentId: string;
+  _id: string;
+  course: string;
   startTime: Date;
   endTime: Date;
-  questions: StudentQuestion[];
-  answers: StudentAnswer[];
+  objectiveQuestions: string[];
+  theoryQuestions: string[];
 }
 
 export interface StudentAnswer {

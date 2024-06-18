@@ -3,12 +3,16 @@ import { Theme } from "@/types";
 
 interface UIState {
   theme: Theme;
-  activePage: string;
+  hasStarted: boolean;
+  hasFinished: boolean;
+  // activePage: string;
 }
 
 const initialState: UIState = {
   theme: "system",
-  activePage: "Dashboard",
+  hasStarted: false,
+  hasFinished: false,
+  // activePage: "Dashboard",
 };
 
 const uiSlice = createSlice({
@@ -18,11 +22,17 @@ const uiSlice = createSlice({
     setTheme: (state, action: PayloadAction<Theme>) => {
       state.theme = action.payload;
     },
-    setActivePage: (state, action: PayloadAction<string>) => {
-      state.activePage = action.payload;
+    setHasStarted: (state, action: PayloadAction<boolean>) => {
+      state.hasStarted = action.payload;
     },
+    setHasFinished: (state, action: PayloadAction<boolean>) => {
+      state.hasFinished = action.payload;
+    },
+    // setActivePage: (state, action: PayloadAction<string>) => {
+    //   state.activePage = action.payload;
+    // },
   },
 });
 
 export default uiSlice.reducer;
-export const { setTheme, setActivePage } = uiSlice.actions;
+export const { setTheme, setHasStarted, setHasFinished } = uiSlice.actions;
