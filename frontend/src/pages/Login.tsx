@@ -28,12 +28,79 @@ import { User } from "@/types";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import useAuthenticationStatus from "@/hooks/useAuthenticationStatus";
+import { useMutation } from "@tanstack/react-query";
+import { apiCall } from "@/services";
+import { paths } from "@/services/static";
+
 
 const Login = () => {
+  console.log("hello word");
+  // console.log(import.meta.);
+  const { mutate: login, isPending } = useMutation({
+    mutationFn: (data: { email: string; password: string; role: Role }) =>
+      apiCall(
+        { email: data.email, password: data.password },
+        data.role === "student" ? paths.student.login : paths.teacher.login,
+        "post"
+      ),
+    onSuccess: (data) => {
+      if (!data) return;
+      const { token } = data;
+      if (token) localStorage.setItem(AUTH_TOKEN, JSON.stringify(token));
+      if (data.student !== undefined) {
+        const {
+          _id,
+          firstName,
+          lastName,
+          email,
+          role,
+          registeredCourses,
+          takenExams,
+        } = data.student;
+        dispatch(
+          setUser({
+            id: _id,
+            firstName,
+            lastName,
+            email,
+            role: role.toLowerCase(),
+            registeredCourses,
+            takenExams,
+          })
+        );
+      } else if (data.teacher !== undefined) {
+        const {
+          _id,
+          firstName,
+          lastName,
+          email,
+          role,
+          department,
+          createdExams,
+        } = data.teacher;
+        dispatch(
+          setUser({
+            id: _id,
+            firstName,
+            lastName,
+            email,
+            role: role.toLowerCase(),
+            department,
+            createdExams,
+          })
+        );
+      }
+      toast({
+        title: "Login successful",
+        duration: 2000,
+      });
+    },
+  });
   useAuthenticationStatus({ pageType: "public" });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { toast } = useToast();
+
   const form = useForm<UserLoginFields>({
     resolver: zodResolver(UserLoginSchema),
     defaultValues: {
@@ -41,6 +108,7 @@ const Login = () => {
       password: "",
     },
   });
+  
   const { handleSubmit, control } = form;
 
   const onSubmit: SubmitHandler<UserLoginFields> = (data, e) => {

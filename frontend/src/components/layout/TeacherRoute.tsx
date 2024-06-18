@@ -8,6 +8,7 @@ interface TeacherRouteProps {
 
 const TeacherRoute = ({ children }: TeacherRouteProps) => {
   const { user } = useAppSelector((state) => state.auth);
+  // console.log("the user--> "+ JSON.stringify(user))
   const navigate = useNavigate();
 
   const isTeacher = user?.type === "Teacher";

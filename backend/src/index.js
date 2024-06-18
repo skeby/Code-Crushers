@@ -4,12 +4,15 @@ import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import path from "path";
-import router from "./Routes/TeacherRoutes.js";
-import Questionrouter from "./Routes/QuestionsRoute.js";
-import AnswerRouter from "./Routes/ExamRoute.js";
+import TeacherRouter from './Routes/TeacherRoutes.js'
+import QuestionRouter from './Routes/QuestionsRoute.js'
+import AnswerRouter from './Routes/ExamRoute.js'
+import StudentRouter from './Routes/StudentRoute.js'
+import AIRouter from "./Routes/AIRouter.js";
 
 const app = express();
-app.use(express.json());
+app.use(express.json()); 
+
 app.use(
   cors({
     credentials: true,
@@ -35,7 +38,7 @@ mongoose
     console.log("error occurred during connection :(");
   });
 
-app.use("/api/v1/user", router, Questionrouter, AnswerRouter);
+  app.use('/api/v1/user', TeacherRouter, AIRouter, QuestionRouter, AnswerRouter,StudentRouter );
 
 const PORT = parseInt(process.env.PORT || "4000", 10);
 
