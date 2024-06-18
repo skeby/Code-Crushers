@@ -25,7 +25,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { setUser } from "@/state/slices/authSlice";
 import { Role } from "@/types";
-// import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import useAuthenticationStatus from "@/hooks/useAuthenticationStatus";
 import { useMutation } from "@tanstack/react-query";
@@ -33,6 +32,8 @@ import { apiCall } from "@/services";
 import { paths } from "@/services/static";
 
 const Login = () => {
+  console.log("hello word");
+  // console.log(import.meta.);
   const { mutate: login, isPending } = useMutation({
     mutationFn: (data: { email: string; password: string; role: Role }) =>
       apiCall(
