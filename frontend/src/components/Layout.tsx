@@ -28,7 +28,7 @@ const Layout = () => {
         </main>
         <footer className="sticky bg-secondary bottom-0 text-center lg:px-12 py-2 p-5 border-t text-primary">
           <p className="font-semibold">
-            © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
+            © {new Date().getFullYear()} {APP_NAME}.
           </p>
         </footer>
         <Toaster position="top-right" />
