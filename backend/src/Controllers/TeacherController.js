@@ -20,14 +20,15 @@ export const RegisterTeacher = async (req, res) => {
     return res.status(400).json({ message: "User already exists" });
   }
   const password = generatePassword();
-  // const hashedPassword = await bcrypt.hashSync(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   user = new Teacher({
     firstName,
     lastName,
     email,
     department,
     role,
-    password
+    password:hashedPassword
   });
   await user.save();
 
@@ -61,10 +62,11 @@ export const LoginTeacher = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // const isMatch = await bcrypt.compare(password, teacher.password);
-    // if (!isMatch) {
-    //     return res.status(401).json({ message: 'Invalid credentials' });
-    // }
+    const isPasswordCorrect = await bcrypt.compare(password, teacher.password);
+        if (!isPasswordCorrect) {
+            return res.status(400).json({ message: 'Invalid password' });
+        }
+
     const token = jwt.sign(
       { email: teacher.email, userId: teacher._id, role: teacher.role },
       process.env.SECRET,

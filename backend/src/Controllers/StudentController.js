@@ -19,14 +19,17 @@ export const RegisterStudent = async (req, res) => {
         return res.status(400).json({ message: 'student already exists' });
     }
     const password = generatePassword();
+        const hashedPassword = await bcrypt.hash(password, 10);
+
     user = new Student({
         firstName,
         lastName,
         email,
         registeredCourses,
-        password,
+        password:hashedPassword,
         role
     });
+
     await user.save();
 
     sendEmail({
@@ -40,7 +43,7 @@ export const RegisterStudent = async (req, res) => {
     res.status(201).json({ message: `${role} registered successfully!`, userWithoutPassword });
     } catch (error) {
         console.error('Error registering student:', error);
-  res.status(500).json({ message: 'Server error', error,message});
+  res.status(500).json({ message: 'Server error', error});
     }}
     
 
@@ -57,10 +60,10 @@ export const LoginStudent = async (req, res) => {
             return res.status(404).json({ message: 'Student not found' });
         }
         
-        // const isMatch = await bcrypt.compare(password, teacher.password);
-        // if (!isMatch) {
-        //     return res.status(401).json({ message: 'Invalid credentials' });
-        // }
+        const isPasswordCorrect = await bcrypt.compare(password, student.password);
+        if (!isPasswordCorrect) {
+            return res.status(400).json({ message: 'Invalid password' });
+        }
 
         const token = jwt.sign(
             { email: student.email, userId: student._id, role: student.role },
@@ -71,7 +74,7 @@ export const LoginStudent = async (req, res) => {
         res.status(200).json({ message: 'Login successful', token, student });
     } catch (error) {
         console.error('Error during login:', error);
-        res.status(500).json({ message: 'Server error', error,message });
+        res.status(500).json({ message: 'Server error', error});
     }
 };
 
