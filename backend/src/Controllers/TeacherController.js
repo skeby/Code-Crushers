@@ -43,7 +43,7 @@ export const RegisterTeacher = async (req, res) => {
   res.status(201).json({ message: `${role} registered successfully!`, userWithoutPassword});
 } catch (error) {
   console.error('Error registering teacher:', error);
-  res.status(500).json({ message: 'Server error', error});
+  res.status(500).json(error.message);
   }};
   
 
