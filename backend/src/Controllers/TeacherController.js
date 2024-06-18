@@ -43,7 +43,7 @@ export const RegisterTeacher = async (req, res) => {
   res.status(201).json({ message: `${role} registered successfully!`, userWithoutPassword});
 } catch (error) {
   console.error('Error registering teacher:', error);
-  res.status(500).json({ message: 'Server error', error,message});
+  res.status(500).json({ message: 'Server error', error});
   }};
   
 
@@ -76,7 +76,7 @@ export const LoginTeacher = async (req, res) => {
     res.status(200).json({ message: "Login successful", token, teacher });
   } catch (error) {
     console.error("Error during login:", error);
-    res.status(500).json({ message: "Server error",error,message });
+    res.status(500).json({ message: "Server error",error });
   }
 };
 
@@ -91,7 +91,7 @@ export const GetTeacherById = async (req, res) => {
       res.status(200).json(teacher);
   } catch (error) {
       console.error('Error fetching teacher by ID:', error);
-      res.status(500).json({ message: 'Server error',error,message });
+      res.status(500).json({ message: 'Server error',error });
   }
 };
 
@@ -106,7 +106,7 @@ export const GetAllTeachers = async (req, res) => {
       res.status(200).json(teachers);
   } catch (error) {
       console.error('Error fetching all teachers:', error);
-      res.status(500).json({ message: 'Server error',error,message });
+      res.status(500).json({ message: 'Server error',error });
   }
 };
 
@@ -124,7 +124,7 @@ export const getStudentsByExam = async (req, res) => {
         res.status(200).json({ students });
     } catch (error) {
         console.error('Error fetching students:', error);
-        res.status(500).json({ message: 'Server error', error, message });
+        res.status(500).json({ message: 'Server error', error });
     }
 };
 
