@@ -25,7 +25,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { setUser } from "@/state/slices/authSlice";
 import { Role } from "@/types";
-// import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import useAuthenticationStatus from "@/hooks/useAuthenticationStatus";
 import { useMutation } from "@tanstack/react-query";
@@ -125,7 +124,7 @@ const Login = () => {
   return (
     <div className="max-h-screen p-5 sm:p-0 h-screen flex flex-col gap-y-4 items-center justify-center">
       <div className="self-start sm:self-auto">
-        <Logo />
+        <Logo size="lg" />
       </div>
       <Tabs
         defaultValue="student"
@@ -158,17 +157,10 @@ const Login = () => {
                           name="username"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>
-                                {tab === "Student" ? "Matric" : "Registration"}{" "}
-                                Number
-                              </FormLabel>
+                              <FormLabel>Email address</FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder={`Enter your ${
-                                    tab === "Student"
-                                      ? "matric"
-                                      : "registration"
-                                  } number`}
+                                  placeholder={`Enter your email address`}
                                   {...field}
                                 />
                               </FormControl>

@@ -1,16 +1,5 @@
 import CountDown from "@/components/Countdown";
 import ScreenLoader from "@/components/ScreenLoader";
-// import {
-//   AlertDialog,
-//   AlertDialogAction,
-//   AlertDialogCancel,
-//   AlertDialogContent,
-//   AlertDialogDescription,
-//   AlertDialogFooter,
-//   AlertDialogHeader,
-//   AlertDialogTitle,
-//   AlertDialogTrigger,
-// } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -58,10 +47,10 @@ const ExamPage = () => {
     const message = "This exam does not exist.";
     toast({
       title: message,
-      description: "Ensure to use to right exam id.",
-      duration: 6000,
+      description: "Ensure to use to right exam id given by the teacher.",
+      duration: 3000,
     });
-    throw new Error(message);
+    history.back();
   }
   const {
     _id: id,
@@ -88,9 +77,12 @@ const ExamPage = () => {
       apiCall(data, paths.student.answerObjective, "post"),
     onSuccess: () => {
       if (currentObjectiveIndex < objectiveQuestions.length - 1) {
-        setCurrentObjectiveQuestion(
-          objectiveQuestions[currentObjectiveIndex + 1]
-        );
+        setCurrentObjectiveAnswer("");
+        setCurrentObjectiveIndex((prev) => {
+          const newObjectiveIndex = prev + 1;
+          setCurrentObjectiveQuestion(objectiveQuestions[newObjectiveIndex]);
+          return newObjectiveIndex;
+        });
       } else {
         if (!currentTheoryQuestion) dispatch(setHasFinished(true));
         setCurrentObjectiveQuestion(null);
@@ -103,7 +95,12 @@ const ExamPage = () => {
       apiCall(data, paths.student.answerTheory, "post"),
     onSuccess: () => {
       if (currentTheoryIndex < theoryQuestions.length - 1) {
-        setCurrentTheoryQuestion(theoryQuestions[currentTheoryIndex + 1]);
+        setCurrentTheoryAnswer("");
+        setCurrentTheoryIndex((prev) => {
+          const newTheoryIndex = prev + 1;
+          setCurrentTheoryQuestion(theoryQuestions[newTheoryIndex]);
+          return newTheoryIndex;
+        });
       } else {
         if (!currentObjectiveQuestion) dispatch(setHasFinished(true));
         setCurrentTheoryQuestion(null);
@@ -115,16 +112,20 @@ const ExamPage = () => {
     data: objective,
     isLoading: objectiveLoading,
     isFetching: objectiveFetching,
-    refetch,
+    refetch: refetchObjective,
   } = useQuery({
     queryKey: [currentObjectiveQuestion],
     queryFn: () => {
-      if (currentObjectiveQuestion !== undefined)
+      if (
+        currentObjectiveQuestion !== null &&
+        currentObjectiveQuestion !== undefined
+      )
         return apiCall(
           {},
           `${paths.student.getObjectiveById}/${currentObjectiveQuestion}`,
           "get"
         );
+      return null;
     },
   });
 
@@ -136,16 +137,17 @@ const ExamPage = () => {
   } = useQuery({
     queryKey: [currentTheoryQuestion],
     queryFn: () => {
-      if (currentTheoryQuestion !== undefined)
+      if (currentTheoryQuestion !== null && currentTheoryQuestion !== undefined)
         return apiCall(
           {},
           `${paths.student.getTheoryById}/${currentTheoryQuestion}`,
           "get"
         );
+      return null;
     },
   });
 
-  // console.log(theory);
+  // Redux Dispatch and Selectors
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const { hasStarted, hasFinished } = useAppSelector((state) => state.ui);
@@ -154,12 +156,13 @@ const ExamPage = () => {
   const [countdownTime, setCountDownTime] = useState(
     Math.floor((endTimeDate.getTime() - startTimeDate.getTime()) / 1000)
   );
-
-  const currentTheoryIndex = theoryQuestions.findIndex(
-    (question) => question === currentTheoryQuestion
+  const [currentObjectiveIndex, setCurrentObjectiveIndex] = useState(
+    objectiveQuestions.findIndex(
+      (question) => question === currentObjectiveQuestion
+    )
   );
-  const currentObjectiveIndex = objectiveQuestions.findIndex(
-    (question) => question === currentObjectiveQuestion
+  const [currentTheoryIndex, setCurrentTheoryIndex] = useState(
+    theoryQuestions.findIndex((question) => question === currentTheoryQuestion)
   );
 
   const formatDate = (date: Date) => {
@@ -187,7 +190,7 @@ const ExamPage = () => {
 
   useEffect(() => {
     if (currentObjectiveIndex > 0) {
-      refetch();
+      refetchObjective();
     }
   }, [currentObjectiveIndex]);
 
@@ -279,20 +282,21 @@ const ExamPage = () => {
               className="max-w-[600px] w-full"
             >
               <Card className="h-full w-full sm:h-auto transition-all sm:block flex-col flex duration-500">
-                <CardHeader>
-                  {((tab === "Theory" && theoryQuestions.length > 0) ||
-                    (tab === "Objective" && objectiveQuestions.length > 0)) && (
+                {((tab === "Theory" && theoryQuestions.length > 0) ||
+                  (tab === "Objective" && objectiveQuestions.length > 0)) && (
+                  <CardHeader>
                     <CardTitle>
                       Question{" "}
                       {tab === "Theory"
                         ? currentTheoryIndex + 1
                         : currentObjectiveIndex + 1}
                     </CardTitle>
-                  )}
-                  {/* <CardDescription>Some description</CardDescription> */}
-                </CardHeader>
+                    {/* <CardDescription>Some description</CardDescription> */}
+                  </CardHeader>
+                )}
                 {tab === "Theory" ? (
-                  theoryQuestions.length > 0 ? (
+                  theoryQuestions.length > 0 &&
+                  currentTheoryQuestion !== null ? (
                     <CardContent>
                       <div className="grid w-full gap-y-2.5">
                         <Label>{theory?.question}</Label>
@@ -307,48 +311,48 @@ const ExamPage = () => {
                       </div>
                     </CardContent>
                   ) : (
-                    <p className="text-center">No theory questions available</p>
+                    <CardHeader className="text-center">
+                      No theory questions available
+                    </CardHeader>
                   )
-                ) : objectiveQuestions.length > 0 ? (
+                ) : objectiveQuestions.length > 0 &&
+                  currentObjectiveQuestion !== null ? (
                   <CardContent className="flex flex-col gap-y-5">
                     <Label>{objective.question}</Label>
                     <RadioGroup
+                      value={currentObjectiveAnswer}
                       onValueChange={(value) => {
                         setCurrentObjectiveAnswer(value);
                       }}
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem
-                          value={objective?.options.a}
-                          id="option-a"
-                        />
-                        <Label htmlFor="option-a">{objective?.options.a}</Label>
+                        <RadioGroupItem value="a" id="option-a" />
+                        <Label htmlFor="option-a">
+                          {objective?.options?.a}
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem
-                          value={objective?.options.b}
-                          id="option-b"
-                        />
-                        <Label htmlFor="option-b">{objective?.options.b}</Label>
+                        <RadioGroupItem value="b" id="option-b" />
+                        <Label htmlFor="option-b">
+                          {objective?.options?.b}
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem
-                          value={objective?.options.c}
-                          id="option-c"
-                        />
-                        <Label htmlFor="option-c">{objective?.options.c}</Label>
+                        <RadioGroupItem value="c" id="option-c" />
+                        <Label htmlFor="option-c">
+                          {objective?.options?.c}
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem
-                          value={objective?.options.d}
-                          id="option-d"
-                        />
-                        <Label htmlFor="option-d">{objective?.options.d}</Label>
+                        <RadioGroupItem value="d" id="option-d" />
+                        <Label htmlFor="option-d">
+                          {objective?.options?.d}
+                        </Label>
                       </div>
                     </RadioGroup>
                   </CardContent>
                 ) : (
-                  <p>No objective questions available</p>
+                  <CardHeader>No objective questions available</CardHeader>
                 )}
                 {((tab === "Theory" && theoryQuestions.length > 0) ||
                   (tab === "Objective" && objectiveQuestions.length > 0)) && (
@@ -389,7 +393,6 @@ const ExamPage = () => {
                               studentId: user?.id as string,
                               examId: id,
                             });
-                            setCurrentTheoryAnswer("");
                           }
                         } else if (tab === "Objective") {
                           if (currentObjectiveQuestion !== null) {
@@ -400,7 +403,6 @@ const ExamPage = () => {
                               studentId: user?.id as string,
                               examId: id,
                             });
-                            setCurrentObjectiveAnswer("");
                           }
                         }
                       }}

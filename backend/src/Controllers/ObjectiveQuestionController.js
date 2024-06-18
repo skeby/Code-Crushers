@@ -9,7 +9,11 @@ export const createObjectiveQuestion = async (req, res) => {
         if (!questionText || !options || !correctOption || !course || !examId) {
             return res.status(400).json({ message: 'All fields are required' });
         }
-
+          
+        const existingQuestion = await ObjectiveQuestion.findOne({ questionText, examId });
+        if (existingQuestion) {
+            return res.status(400).json({ message: 'This question already exists in this exam' });
+        }
         const newQuestion = new ObjectiveQuestion({
             questionType: 'objective',
             examId,
@@ -28,7 +32,6 @@ export const createObjectiveQuestion = async (req, res) => {
         if(newQuestion.course !== exam.course ){
             return res.status(404).json({ message: 'course does not match the exam course' });
         }
-
         exam.objectiveQuestions.push(savedQuestion._id);
         await exam.save();
 
@@ -36,10 +39,8 @@ export const createObjectiveQuestion = async (req, res) => {
         if (!teacher) {
             return res.status(404).json({ message: 'Teacher not found' });
         }
-
         teacher.createdExams.push(exam._id);
         await teacher.save();
-
         res.status(201).json({ message: 'Objective question uploaded successfully!', savedQuestion });
     } catch (error) {
         res.status(500).json({ message: error.message });

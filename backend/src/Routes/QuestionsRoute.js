@@ -5,7 +5,7 @@ import { GetAllObjectives, GetObjectiveById, createObjectiveQuestion } from '../
 import {authMiddleware} from '../Middlewares/Authorization.js'
 import { GetAllExams, GetExamById, createExam } from '../Controllers/ExamController.js'
 
-const QuestionRouter = express.Router();
+const QuestionRouter= express.Router()
 
 QuestionRouter.post('/createExam',authMiddleware, createExam)
 QuestionRouter.post('/createTheory',authMiddleware,createTheoryQuestion )
@@ -17,5 +17,5 @@ QuestionRouter.get('/getAllTheories', GetAllTheories)
 QuestionRouter.get('/getObjectiveById/:objectiveId', GetObjectiveById)
 QuestionRouter.get('/getAllObjectives', GetAllObjectives)
 
-
 export default QuestionRouter;
+

@@ -22,21 +22,17 @@ export const UserLoginSchema = z.object({
 
 export const CreateTheorySchema = z.object({
   questionText: z.string().min(1, { message: validation.required }),
-  // TODO: Remove this, course should be prefilled from the queried exams
-  course: z.string().min(1, { message: validation.required }),
   correctAnswer: z.string().min(1, { message: validation.required }),
 });
 
 export const CreateObjectiveSchema = z.object({
   questionText: z.string().min(1, { message: validation.required }),
-  // TODO: Remove this, course should be prefilled from the queried exams
   options: z.object({
     a: z.string().min(1, { message: validation.required }),
     b: z.string().min(1, { message: validation.required }),
     c: z.string().min(1, { message: validation.required }),
     d: z.string().min(1, { message: validation.required }),
   }),
-  course: z.string().min(1, { message: validation.required }),
   correctOption: z.string().min(1, { message: validation.required }),
 });
 

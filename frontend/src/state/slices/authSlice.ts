@@ -12,7 +12,7 @@ interface AuthState {
   user: User<Role> | null;
   isAuthenticated: boolean;
   // hasOnboarded: boolean;
-  refetch: Refetch;
+  refetchUser: Refetch;
   error: string | null;
 }
 
@@ -55,7 +55,7 @@ const initialState: AuthState = {
   // },
   // isAuthenticated: true,
   // hasOnboarded: false,
-  refetch: () => Promise.resolve({} as QueryObserverResult<any, Error>),
+  refetchUser: () => Promise.resolve({} as QueryObserverResult<any, Error>),
   error: null,
 };
 
@@ -78,11 +78,11 @@ const authSlice = createSlice({
       if (user) localStorage.removeItem(USER);
       if (token) localStorage.removeItem(AUTH_TOKEN);
     },
-    setRefetch: (state, action: PayloadAction<Refetch>) => {
-      state.refetch = action.payload;
+    setRefetchUser: (state, action: PayloadAction<Refetch>) => {
+      state.refetchUser = action.payload;
     },
   },
 });
 
 export default authSlice.reducer;
-export const { setUser, clearUser, setRefetch } = authSlice.actions;
+export const { setUser, clearUser, setRefetchUser } = authSlice.actions;

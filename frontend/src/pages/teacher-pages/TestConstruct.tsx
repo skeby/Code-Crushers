@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueries } from "@tanstack/react-query";
 import { apiCall } from "@/services";
 import { paths } from "@/services/static";
 import {
@@ -42,7 +42,7 @@ import TimeSelector from "@/components/TimeSelector";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { questionTabs, examOptions } from "@/static";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -50,34 +50,45 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import HiglightedText from "@/components/HiglightedText";
+import ScreenLoader from "@/components/ScreenLoader";
+import Utils from "@/utils";
+
+const fetchExamDetails = async (examId: string | null) => {
+  const response = await apiCall(
+    {},
+    `${paths.teacher.getExamById}/${examId}`,
+    "get"
+  );
+  return response;
+};
 
 const TestConstruct = () => {
   const { user } = useAppSelector((state) => state.auth);
   const { createdExams } = user as User<"teacher">;
-  const [openedExam, setOpenedExam] = useState<string | null>(null);
+  const [openedExam, setOpenedExam] = useState<any>();
+  const [isCreateExamModalOpen, setIsCreateExamModalOpen] = useState(false);
   // const [currentFetchedExam, setCurrentFetchedExam] = useState<string | null>(
   //   createdExams?.[0]
   // );
-  const { refetch } = useAppSelector((state) => state.auth);
-  // const {} = useQuery({
-  //   queryKey: [currentFetchedExam],
-  //   queryFn: () =>
-  //     apiCall(
-  //       {},
-  //       `${paths.teacher.getExamById}/${currentFetchedExam}`,
-  //       "get"
-  //     ).then(() =>
-  //       setCurrentFetchedExam(
-  //         (prev) => createdExams?.[createdExams?.findIndex((c) => c === prev)]
-  //       )
-  //     ),
-  //   enabled: false,
-  // });
+  const { refetchUser } = useAppSelector((state) => state.auth);
+  const examDetailsQueries = createdExams
+    ? useQueries({
+        queries: createdExams.map((createdExam) => ({
+          queryKey: [createdExams],
+          queryFn: () => fetchExamDetails(createdExam),
+        })),
+      })
+    : null;
+  const isQueryExamDetailsLoading = examDetailsQueries?.some(
+    (query) => query.isLoading || query.isFetching
+  );
+
   const { mutate: createExam, isPending: isCreateExamPending } = useMutation({
     mutationFn: (data: CreateExamFields) =>
       apiCall({ ...data, creator: user?.id }, paths.teacher.createExam, "post"),
     onSuccess: () => {
-      refetch();
+      refetchUser();
       resetCreateExamForm({
         course: "",
       });
@@ -88,15 +99,19 @@ const TestConstruct = () => {
     useMutation({
       mutationFn: (data: CreateTheoryFields) =>
         apiCall(
-          { ...data, creator: user?.id, examId: openedExam },
+          {
+            ...data,
+            creator: user?.id,
+            examId: openedExam._id,
+            course: openedExam.course,
+          },
           paths.teacher.createTheory,
           "post"
         ),
       onSuccess: () => {
-        refetch();
+        refetchUser();
         resetCreateTheoryForm({
           questionText: "",
-          course: "",
           correctAnswer: "",
         });
       },
@@ -106,15 +121,14 @@ const TestConstruct = () => {
     useMutation({
       mutationFn: (data: CreateObjectiveFields) =>
         apiCall(
-          { ...data, creator: user?.id, examId: openedExam },
+          { ...data, creator: user?.id, examId: openedExam._id },
           paths.teacher.createObjective,
           "post"
         ),
       onSuccess: () => {
-        refetch();
+        refetchUser();
         resetCreateObjectiveForm({
           questionText: "",
-          course: "",
           correctOption: "",
           options: {
             a: "",
@@ -137,7 +151,6 @@ const TestConstruct = () => {
     resolver: zodResolver(CreateTheorySchema),
     defaultValues: {
       questionText: "",
-      course: "",
       correctAnswer: "",
     },
   });
@@ -146,7 +159,6 @@ const TestConstruct = () => {
     resolver: zodResolver(CreateObjectiveSchema),
     defaultValues: {
       questionText: "",
-      course: "",
       correctOption: "",
       options: {
         a: "",
@@ -191,198 +203,118 @@ const TestConstruct = () => {
     createObjective(data);
   };
 
+  useEffect(() => {
+    refetchUser();
+  }, []);
+
   return (
     <div className="flex flex-col items-center">
+      <ScreenLoader loading={isQueryExamDetailsLoading ?? false} />
       {createdExams?.length === 0 ? (
         <p className="mb-4 font-semibold">
           No tests available. Click on the button below to create a test.
         </p>
       ) : (
-        <div className="flex w-full flex-col gap-y-4 mb-28">
-          {createdExams?.map((createdExam, i) => (
-            <Card key={i} className="flex justify-between">
-              <CardHeader className="flex justify-between p-3 sm:items-center gap-4 sm:flex-row w-full">
-                <div>
-                  <CardTitle className="text-base">{createdExam}</CardTitle>
-                  <CardDescription>Questions Created:</CardDescription>
-                </div>
-                <Dialog>
-                  <DialogTrigger
-                    asChild
-                    onClick={() => setOpenedExam(createdExam)}
-                    className="!mt-0"
-                  >
-                    <Button variant={"outline"}>Add Question</Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Question</DialogTitle>
-                      <DialogDescription>
-                        Add a question here.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <Tabs defaultValue="theory">
-                      <TabsList className="grid w-full grid-cols-2 mb-5">
-                        {questionTabs.map((tab, i) => (
-                          <TabsTrigger key={i} value={tab.toLowerCase()}>
-                            {tab}
-                          </TabsTrigger>
-                        ))}
-                      </TabsList>
-                      {questionTabs.map((tab, i) =>
-                        tab === "Theory" ? (
-                          <TabsContent
-                            key={i}
-                            value={tab.toLowerCase()}
-                            className="h-[380px] overflow-auto"
-                          >
-                            <DialogHeader>
-                              <Form {...createTheoryForm}>
-                                <form
-                                  onSubmit={handleCreateTheoryFormSubmit(
-                                    onCreateTheoryFormSubmit
-                                  )}
-                                  id={`create-${tab.toLowerCase()}-form`}
-                                >
-                                  <div className="grid w-full items-center gap-4">
-                                    <div className="flex flex-col space-y-1.5">
-                                      <FormField
-                                        control={createTheoryControl}
-                                        name="course"
-                                        render={({ field }) => (
-                                          <FormItem>
-                                            <FormLabel>Course Name</FormLabel>
-                                            <FormControl>
-                                              <Input
-                                                placeholder="Enter the name of the course"
-                                                {...field}
-                                              />
-                                            </FormControl>
-                                            <FormMessage />
-                                          </FormItem>
-                                        )}
-                                      />
-                                    </div>
-                                    <div className="flex flex-col space-y-1.5">
-                                      <FormField
-                                        control={createTheoryControl}
-                                        name="questionText"
-                                        render={({ field }) => (
-                                          <FormItem>
-                                            <FormLabel>Question</FormLabel>
-                                            <FormControl>
-                                              <Textarea
-                                                placeholder="Enter a question"
-                                                {...field}
-                                              />
-                                            </FormControl>
-                                            <FormMessage />
-                                          </FormItem>
-                                        )}
-                                      />
-                                    </div>
-                                    <div className="flex flex-col space-y-1.5">
-                                      <FormField
-                                        control={createTheoryControl}
-                                        name="correctAnswer"
-                                        render={({ field }) => (
-                                          <FormItem>
-                                            <FormLabel>
-                                              Correct Answer
-                                            </FormLabel>
-                                            <FormControl>
-                                              <Textarea
-                                                placeholder="Enter the correct answer to the question"
-                                                {...field}
-                                              />
-                                            </FormControl>
-                                            <FormMessage />
-                                          </FormItem>
-                                        )}
-                                      />
-                                    </div>
-                                  </div>
-                                </form>
-                              </Form>
-                            </DialogHeader>
-                            <DialogFooter className="mt-4 sticky bottom-0">
-                              <Button
-                                loading={isCreateTheoryPending}
-                                type="submit"
-                                className="w-full"
-                                form={`create-${tab.toLowerCase()}-form`}
-                              >
-                                Submit
-                              </Button>
-                            </DialogFooter>
-                          </TabsContent>
-                        ) : (
-                          <TabsContent
-                            key={i}
-                            value={tab.toLowerCase()}
-                            className="h-[380px] overflow-auto"
-                          >
-                            <DialogHeader>
-                              <Form {...createObjectiveForm}>
-                                <form
-                                  onSubmit={handleCreateObjectiveFormSubmit(
-                                    onCreateObjectiveFormSubmit
-                                  )}
-                                  id={`create-${tab.toLowerCase()}-form`}
-                                >
-                                  <div className="grid w-full items-center gap-4">
-                                    <div className="flex flex-col space-y-1.5">
-                                      <FormField
-                                        control={createObjectiveControl}
-                                        name="course"
-                                        render={({ field }) => (
-                                          <FormItem>
-                                            <FormLabel>Course Name</FormLabel>
-                                            <FormControl>
-                                              <Input
-                                                placeholder="Enter the name of the course"
-                                                {...field}
-                                              />
-                                            </FormControl>
-                                            <FormMessage />
-                                          </FormItem>
-                                        )}
-                                      />
-                                    </div>
-                                    <div className="flex flex-col space-y-1.5">
-                                      <FormField
-                                        control={createObjectiveControl}
-                                        name="questionText"
-                                        render={({ field }) => (
-                                          <FormItem>
-                                            <FormLabel>Question</FormLabel>
-                                            <FormControl>
-                                              <Textarea
-                                                placeholder="Enter a question"
-                                                {...field}
-                                              />
-                                            </FormControl>
-                                            <FormMessage />
-                                          </FormItem>
-                                        )}
-                                      />
-                                    </div>
-                                    {examOptions.map((option, i) => (
-                                      <div
-                                        key={i}
-                                        className="flex flex-col space-y-1.5"
-                                      >
+        <div className="flex w-full flex-col gap-y-4 mb-28 items-center">
+          {examDetailsQueries?.map((examDetailsQuery, i) => {
+            const exam = examDetailsQuery?.data;
+            return (
+              <Card
+                key={i}
+                className="flex justify-between max-w-[500px] w-full"
+              >
+                <CardHeader className="flex justify-between p-3 gap-4 flex-col w-full">
+                  <div>
+                    <CardTitle className="text-base mb-1">
+                      {exam?.course?.toUpperCase()}
+                    </CardTitle>
+                    <CardDescription className="flex justify-between items-center gap-x-2 leading-4 mb-0.5">
+                      Number of Objectives:{" "}
+                      <HiglightedText>
+                        {exam?.objectiveQuestions?.length}
+                      </HiglightedText>
+                    </CardDescription>
+                    <CardDescription className="flex justify-between items-center gap-x-2 leading-4 mb-0.5">
+                      Number of Theory:{" "}
+                      <HiglightedText>
+                        {exam?.theoryQuestions?.length}
+                      </HiglightedText>
+                    </CardDescription>
+                    <CardDescription className="flex justify-between items-center gap-x-2 leading-4 mb-0.5">
+                      Start Time:{" "}
+                      <HiglightedText>
+                        {exam?.startTime
+                          ? Utils.formatDateTime(
+                              new Date(exam?.startTime as string)
+                            )
+                          : "N/A"}
+                      </HiglightedText>
+                    </CardDescription>
+                    <CardDescription className="flex justify-between items-center gap-x-2 leading-4 mb-0.5">
+                      End Time:{" "}
+                      <HiglightedText>
+                        {exam?.endTime
+                          ? Utils.formatDateTime(
+                              new Date(exam?.endTime as string)
+                            )
+                          : "N/A"}
+                      </HiglightedText>
+                    </CardDescription>
+                    <CardDescription className="flex justify-between items-center gap-x-2 leading-4">
+                      Exam ID: <HiglightedText>{exam?._id}</HiglightedText>
+                    </CardDescription>
+                  </div>
+                  <Dialog>
+                    <DialogTrigger
+                      asChild
+                      onClick={() => {
+                        if (exam !== undefined) setOpenedExam(exam);
+                      }}
+                      className="!mt-0"
+                    >
+                      <Button variant={"outline"}>Add Question</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Question</DialogTitle>
+                        <DialogDescription>
+                          Add a question here.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <Tabs defaultValue="theory">
+                        <TabsList className="grid w-full grid-cols-2 mb-5">
+                          {questionTabs.map((tab, i) => (
+                            <TabsTrigger key={i} value={tab.toLowerCase()}>
+                              {tab}
+                            </TabsTrigger>
+                          ))}
+                        </TabsList>
+                        {questionTabs.map((tab, i) =>
+                          tab === "Theory" ? (
+                            <TabsContent
+                              key={i}
+                              value={tab.toLowerCase()}
+                              className="h-[380px] overflow-auto"
+                            >
+                              <DialogHeader>
+                                <Form {...createTheoryForm}>
+                                  <form
+                                    onSubmit={handleCreateTheoryFormSubmit(
+                                      onCreateTheoryFormSubmit
+                                    )}
+                                    id={`create-${tab.toLowerCase()}-form`}
+                                  >
+                                    <div className="grid w-full items-center gap-4">
+                                      <div className="flex flex-col space-y-1.5">
                                         <FormField
-                                          control={createObjectiveControl}
-                                          name={`options.${option}`}
+                                          control={createTheoryControl}
+                                          name="questionText"
                                           render={({ field }) => (
                                             <FormItem>
-                                              <FormLabel>
-                                                Option {option.toUpperCase()}
-                                              </FormLabel>
+                                              <FormLabel>Question</FormLabel>
                                               <FormControl>
-                                                <Input
-                                                  placeholder="Enter an option"
+                                                <Textarea
+                                                  placeholder="Enter a question"
                                                   {...field}
                                                 />
                                               </FormControl>
@@ -391,69 +323,165 @@ const TestConstruct = () => {
                                           )}
                                         />
                                       </div>
-                                    ))}
-                                    <div className="flex flex-col space-y-1.5">
-                                      <FormField
-                                        control={createObjectiveControl}
-                                        name="correctOption"
-                                        render={({ field }) => (
-                                          <FormItem>
-                                            <FormLabel>
-                                              Correct Option
-                                            </FormLabel>
-                                            <Select
-                                              onValueChange={field.onChange}
-                                              defaultValue={field.value}
-                                            >
+                                      <div className="flex flex-col space-y-1.5">
+                                        <FormField
+                                          control={createTheoryControl}
+                                          name="correctAnswer"
+                                          render={({ field }) => (
+                                            <FormItem>
+                                              <FormLabel>
+                                                Correct Answer
+                                              </FormLabel>
                                               <FormControl>
-                                                <SelectTrigger>
-                                                  <SelectValue placeholder="Select the correct option" />
-                                                </SelectTrigger>
+                                                <Textarea
+                                                  placeholder="Enter the correct answer to the question"
+                                                  {...field}
+                                                />
                                               </FormControl>
-                                              <SelectContent>
-                                                {examOptions.map(
-                                                  (option, i) => (
-                                                    <SelectItem
-                                                      key={i}
-                                                      value={option}
-                                                    >
-                                                      {option.toUpperCase()}
-                                                    </SelectItem>
-                                                  )
-                                                )}
-                                              </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                          </FormItem>
-                                        )}
-                                      />
+                                              <FormMessage />
+                                            </FormItem>
+                                          )}
+                                        />
+                                      </div>
                                     </div>
-                                  </div>
-                                </form>
-                              </Form>
-                            </DialogHeader>
-                            <DialogFooter className="mt-4 sticky bottom-0">
-                              <Button
-                                loading={isCreateObjectivePending}
-                                type="submit"
-                                className="w-full"
-                                form={`create-${tab.toLowerCase()}-form`}
-                              >
-                                Submit
-                              </Button>
-                            </DialogFooter>
-                          </TabsContent>
-                        )
-                      )}
-                    </Tabs>
-                  </DialogContent>
-                </Dialog>
-              </CardHeader>
-            </Card>
-          ))}
+                                  </form>
+                                </Form>
+                              </DialogHeader>
+                              <DialogFooter className="mt-4 sticky bottom-0">
+                                <Button
+                                  loading={isCreateTheoryPending}
+                                  type="submit"
+                                  className="w-full"
+                                  form={`create-${tab.toLowerCase()}-form`}
+                                >
+                                  Submit
+                                </Button>
+                              </DialogFooter>
+                            </TabsContent>
+                          ) : (
+                            <TabsContent
+                              key={i}
+                              value={tab.toLowerCase()}
+                              className="h-[380px] overflow-auto"
+                            >
+                              <DialogHeader>
+                                <Form {...createObjectiveForm}>
+                                  <form
+                                    onSubmit={handleCreateObjectiveFormSubmit(
+                                      onCreateObjectiveFormSubmit
+                                    )}
+                                    id={`create-${tab.toLowerCase()}-form`}
+                                  >
+                                    <div className="grid w-full items-center gap-4">
+                                      <div className="flex flex-col space-y-1.5">
+                                        <FormField
+                                          control={createObjectiveControl}
+                                          name="questionText"
+                                          render={({ field }) => (
+                                            <FormItem>
+                                              <FormLabel>Question</FormLabel>
+                                              <FormControl>
+                                                <Textarea
+                                                  placeholder="Enter a question"
+                                                  {...field}
+                                                />
+                                              </FormControl>
+                                              <FormMessage />
+                                            </FormItem>
+                                          )}
+                                        />
+                                      </div>
+                                      {examOptions.map((option, i) => (
+                                        <div
+                                          key={i}
+                                          className="flex flex-col space-y-1.5"
+                                        >
+                                          <FormField
+                                            control={createObjectiveControl}
+                                            name={`options.${option}`}
+                                            render={({ field }) => (
+                                              <FormItem>
+                                                <FormLabel>
+                                                  Option {option.toUpperCase()}
+                                                </FormLabel>
+                                                <FormControl>
+                                                  <Input
+                                                    placeholder="Enter an option"
+                                                    {...field}
+                                                  />
+                                                </FormControl>
+                                                <FormMessage />
+                                              </FormItem>
+                                            )}
+                                          />
+                                        </div>
+                                      ))}
+                                      <div className="flex flex-col space-y-1.5">
+                                        <FormField
+                                          control={createObjectiveControl}
+                                          name="correctOption"
+                                          render={({ field }) => (
+                                            <FormItem>
+                                              <FormLabel>
+                                                Correct Option
+                                              </FormLabel>
+                                              <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                              >
+                                                <FormControl>
+                                                  <SelectTrigger>
+                                                    <SelectValue placeholder="Select the correct option" />
+                                                  </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                  {examOptions.map(
+                                                    (option, i) => (
+                                                      <SelectItem
+                                                        key={i}
+                                                        value={option}
+                                                      >
+                                                        {option.toUpperCase()}
+                                                      </SelectItem>
+                                                    )
+                                                  )}
+                                                </SelectContent>
+                                              </Select>
+                                              <FormMessage />
+                                            </FormItem>
+                                          )}
+                                        />
+                                      </div>
+                                    </div>
+                                  </form>
+                                </Form>
+                              </DialogHeader>
+                              <DialogFooter className="mt-4 sticky bottom-0">
+                                <Button
+                                  loading={isCreateObjectivePending}
+                                  type="submit"
+                                  className="w-full"
+                                  form={`create-${tab.toLowerCase()}-form`}
+                                >
+                                  Submit
+                                </Button>
+                              </DialogFooter>
+                            </TabsContent>
+                          )
+                        )}
+                      </Tabs>
+                    </DialogContent>
+                  </Dialog>
+                </CardHeader>
+              </Card>
+            );
+          })}
         </div>
       )}
-      <Dialog>
+      <Dialog
+        open={isCreateExamModalOpen}
+        onOpenChange={(open) => setIsCreateExamModalOpen(open)}
+      >
         <DialogTrigger asChild>
           <div
             className={

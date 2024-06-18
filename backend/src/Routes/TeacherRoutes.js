@@ -9,4 +9,5 @@ TeacherRouter.post('/loginTeacher', LoginTeacher );
 TeacherRouter.get('/getTeacherById/:teacherId', GetTeacherById)
 TeacherRouter.get('/getAllTeachers', GetAllTeachers)
 TeacherRouter.get('/getStudentsByExam/:examId', getStudentsByExam)
+
 export default TeacherRouter;

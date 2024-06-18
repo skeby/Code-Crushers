@@ -27,17 +27,10 @@ export const apiCall = async (
       case "get":
         res = await client.get(path, { params });
         break;
-      case "put":
-        res = await client.put(path, body, { params });
-        break;
-      case "delete":
-        res = await client.delete(path, { params });
-        break;
       default:
         throw new Error(`Unsupported method: ${method}`);
     }
 
-    console.log(res);
     if (!res) {
       throw new Error("Empty response from server");
     }
@@ -57,7 +50,9 @@ export const apiCall = async (
       }
       return responseData;
     } else {
-      const errorMessage = responseData.error || "Something went wrong!";
+      const errorMessage =
+        `${responseData.error ?? ""} ${responseData.message}` ||
+        "Something went wrong!";
       if (method !== "get") {
         toast({
           title: errorMessage,
