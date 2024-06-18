@@ -25,6 +25,9 @@ export const createObjectiveQuestion = async (req, res) => {
         if (!exam) {
             return res.status(404).json({ message: 'Exam not found' });
         }
+        if(newQuestion.course !== exam.course ){
+            return res.status(404).json({ message: 'course does not match the exam course' });
+        }
 
         exam.objectiveQuestions.push(savedQuestion._id);
         await exam.save();
