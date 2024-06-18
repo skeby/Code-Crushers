@@ -17,5 +17,5 @@ QuestionRouter.get('/getAllTheories', GetAllTheories)
 QuestionRouter.get('/getObjectiveById/:objectiveId', GetObjectiveById)
 QuestionRouter.get('/getAllObjectives', GetAllObjectives)
 
-
 export default QuestionRouter;
+
