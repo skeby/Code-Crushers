@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "./state/store";
 import { apiCall } from "./services";
 import { paths } from "./services/static";
 import { useEffect } from "react";
-import { setRefetch, setUser } from "./state/slices/authSlice";
+import { setRefetchUser, setUser } from "./state/slices/authSlice";
 import ScreenLoader from "./components/ScreenLoader";
 
 const App = () => {
@@ -27,7 +27,8 @@ const App = () => {
 
   useEffect(() => {
     if (!user) return;
-    if (data?.role === "Student") {
+    console.log(data);
+    if (data?.role?.toLowerCase() === "student") {
       const {
         _id,
         firstName,
@@ -48,7 +49,7 @@ const App = () => {
           takenExams,
         })
       );
-    } else if (data?.role === "Teacher") {
+    } else if (data?.role?.toLowerCase() === "teacher") {
       const {
         _id,
         firstName,
@@ -73,7 +74,7 @@ const App = () => {
   }, [data]);
 
   useEffect(() => {
-    dispatch(setRefetch(refetch));
+    dispatch(setRefetchUser(refetch));
   }, []);
 
   return (
