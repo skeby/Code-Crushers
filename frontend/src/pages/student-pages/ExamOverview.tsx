@@ -46,7 +46,7 @@ const ExamOverview = () => {
       <div className="flex w-full flex-col gap-y-4">
         {/* {registeredCourses?.map((course, i) => ( */}
         <Card className="flex justify-between">
-          <CardHeader className="flex justify-between p-3 sm:items-center gap-4 sm:flex-row w-full">
+          <CardHeader className="flex p-3 items-center gap-4 w-full">
             {/* <div>
                   <CardTitle className="text-base">
                     {course.toUpperCase()}
@@ -54,7 +54,9 @@ const ExamOverview = () => {
                 </div> */}
             <Dialog>
               <DialogTrigger asChild className="!mt-0">
-                <Button variant={"outline"}>Take An Exam</Button>
+                <Button variant={"outline"} className="w-full">
+                  Take An Exam
+                </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
