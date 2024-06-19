@@ -43,9 +43,9 @@ const ExamOverview = () => {
       {/* {registeredCourses?.length === 0 ? ( */}
       {/* <p className="mb-4 font-semibold">No exams available</p> */}
       {/* // ) : ( */}
-      <div className="flex w-full flex-col gap-y-4">
+      <div className="flex w-full flex-col gap-y-4 items-center">
         {/* {registeredCourses?.map((course, i) => ( */}
-        <Card className="flex justify-between">
+        <Card className="flex justify-between max-w-[500px] w-full">
           <CardHeader className="flex p-3 items-center gap-4 w-full">
             {/* <div>
                   <CardTitle className="text-base">

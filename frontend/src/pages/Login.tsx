@@ -30,6 +30,7 @@ import useAuthenticationStatus from "@/hooks/useAuthenticationStatus";
 import { useMutation } from "@tanstack/react-query";
 import { apiCall } from "@/services";
 import { paths } from "@/services/static";
+import { LightbulbIcon } from "lucide-react";
 
 const Login = () => {
   console.log("hello word");
@@ -132,6 +133,28 @@ const Login = () => {
         </TabsList>
         {loginTabs.map((tab, i) => (
           <TabsContent key={i} value={tab.toLowerCase()} className="flex-grow">
+            <Card className="mb-2">
+              <CardHeader className="py-3 flex-row items-center gap-x-2 text-sm">
+                <LightbulbIcon className="text-muted-foreground flex-shrink-0" />
+                <div className="!m-0 leading-5 text-primary">
+                  <p>
+                    Please login with your temporary email and generated
+                    password, you've been registered by the admin.
+                  </p>
+                  {tab === "Student" ? (
+                    <>
+                      <p>Student Email: oluchicharity10@gmail.com</p>
+                      <p>Student Password: 5juEbUYC</p>
+                    </>
+                  ) : (
+                    <>
+                      <p>Teacher Email: oluchicharity10@gmail.com</p>
+                      <p>Teacher Password: DxHYjYvq</p>
+                    </>
+                  )}
+                </div>
+              </CardHeader>
+            </Card>
             <Card className="w-full h-full sm:h-auto flex flex-col sm:block">
               <CardHeader>
                 <CardTitle>{tab} Login</CardTitle>

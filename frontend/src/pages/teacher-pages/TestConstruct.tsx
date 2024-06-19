@@ -122,7 +122,12 @@ const TestConstruct = () => {
     useMutation({
       mutationFn: (data: CreateObjectiveFields) =>
         apiCall(
-          { ...data, creator: user?.id, examId: openedExam._id },
+          {
+            ...data,
+            creator: user?.id,
+            examId: openedExam._id,
+            course: openedExam.course,
+          },
           paths.teacher.createObjective,
           "post"
         ),
@@ -428,7 +433,7 @@ const TestConstruct = () => {
                                               </FormLabel>
                                               <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                value={field.value}
                                               >
                                                 <FormControl>
                                                   <SelectTrigger>
