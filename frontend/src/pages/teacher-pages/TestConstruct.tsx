@@ -74,9 +74,10 @@ const TestConstruct = () => {
   const { refetchUser } = useAppSelector((state) => state.auth);
   const examDetailsQueries = createdExams
     ? useQueries({
-        queries: createdExams.map((createdExam) => ({
-          queryKey: [createdExams],
+        queries: createdExams.map((createdExam, i) => ({
+          queryKey: [createdExams[i]],
           queryFn: () => fetchExamDetails(createdExam),
+          // refetc,
         })),
       })
     : null;

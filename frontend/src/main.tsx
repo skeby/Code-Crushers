@@ -4,15 +4,19 @@ import App from "./App.tsx";
 import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "@/state/store";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientConfig,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/ui/theme-provider.tsx";
 import { Toaster } from "@/components/ui/toaster.tsx";
 
-const queryClientOptions = {
+const queryClientOptions: QueryClientConfig = {
   defaultOptions: {
     queries: {
-      // staleTime: 0,
       refetchOnWindowFocus: false,
+      staleTime: 0,
     },
   },
 };
