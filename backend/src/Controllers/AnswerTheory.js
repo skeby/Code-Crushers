@@ -23,6 +23,7 @@ export const submitTheoryAnswer = async (req, res) => {
             return res.status(404).json({ message: 'Exam not found or does not match question course' });
         }
 
+        
         const isCorrect = answerText.trim() === question.correctAnswer.trim(); 
 
         const studentAnswer = new Answer({

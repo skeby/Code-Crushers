@@ -8,6 +8,7 @@ import TeacherRouter from './Routes/TeacherRoutes.js'
 import QuestionRouter from './Routes/QuestionsRoute.js'
 import AnswerRouter from './Routes/ExamRoute.js'
 import StudentRouter from './Routes/StudentRoute.js'
+import AIRouter from "./Routes/AIRouter.js";
 
 const app = express();
 app.use(express.json()); 
@@ -37,7 +38,7 @@ mongoose
     console.log("error occurred during connection :(");
   });
 
-  app.use('/api/v1/user', TeacherRouter, QuestionRouter, AnswerRouter,StudentRouter );
+  app.use('/api/v1/user', TeacherRouter, AIRouter, QuestionRouter, AnswerRouter,StudentRouter );
 
 const PORT = parseInt(process.env.PORT || "4000", 10);
 

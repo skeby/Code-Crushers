@@ -45,6 +45,7 @@ export const RegisterStudent = async (req, res) => {
         console.error('Error registering student:', error);
   res.status(500).json({ message: 'Server error', error});
     }}
+    
 
 export const LoginStudent = async (req, res) => {
     try {
@@ -91,6 +92,7 @@ export const GetStudentById = async (req, res) => {
         res.status(500).json({ message: 'Server error' , error,message});
     }
 };
+
 
 export const GetAllStudents = async (req, res) => {
     try {

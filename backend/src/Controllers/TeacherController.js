@@ -70,11 +70,11 @@ export const LoginTeacher = async (req, res) => {
       return res.status(400).json({ message: "Invalid password" });
     }
 
-    const token = jwt.sign(
-      { email: teacher.email, userId: teacher._id, role: teacher.role },
-      `${process.env.SECRET}`,
-      { expiresIn: "1d" }
-    );
+        const token = jwt.sign(
+            { email: teacher.email, userId: teacher._id, role: teacher.role },
+            `${process.env.SECRET}`,
+            { expiresIn: "1d" }
+        );
 
     res.status(200).json({ message: "Login successful", token, teacher });
   } catch (error) {

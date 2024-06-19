@@ -39,7 +39,7 @@ const initialState: AuthState = {
   //   firstName: "Adeyinka",
   //   lastName: "Akinsanya",
   //   status: "free",
-  //   type: "Teacher",
+  //   role: "Teacher",
   //   registrationNumber: "21CG029820",
   // },
 
