@@ -13,7 +13,7 @@ export const authMiddleware = async (req, res, next) => {
 
     let decodedToken;
     try {
-      decodedToken = jwt.verify(token, process.env.SECRET);
+      decodedToken = jwt.verify(token, `${process.env.SECRET}`);
     } catch (error) {
       return res.status(401).json({ error: "Invalid token" });
     }
@@ -40,4 +40,3 @@ export const authMiddleware = async (req, res, next) => {
   }
 };
 export default authMiddleware;
-
