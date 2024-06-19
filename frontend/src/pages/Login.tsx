@@ -32,11 +32,6 @@ import { apiCall } from "@/services";
 import { paths } from "@/services/static";
 import { LightbulbIcon } from "lucide-react";
 
-import { useMutation } from "@tanstack/react-query";
-import { apiCall } from "@/services";
-import { paths } from "@/services/static";
-
-
 const Login = () => {
   console.log("hello word");
   // console.log(import.meta.);
@@ -111,7 +106,7 @@ const Login = () => {
       password: "",
     },
   });
-  
+
   const { handleSubmit, control } = form;
 
   const onSubmit: SubmitHandler<UserLoginFields> = (data, e) => {
