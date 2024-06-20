@@ -5,7 +5,7 @@ import Replicate from "replicate";
 dotenv.config();
 
 const replicate = new Replicate({
-  auth: `${process.env.AI_KEY}`,
+  auth: `${process.env.AI_KEY}` || "r8_6j0Q4P5xSskVUpRfc4XNO44GrYe2ny41nQw8I",
 });
 
 const embeddingCache = new Map();
