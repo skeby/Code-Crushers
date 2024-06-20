@@ -8,7 +8,7 @@ import Replicate from "replicate";
 dotenv.config();
 
 const replicate = new Replicate({
-  auth: `${process.env.AI_KEY}` || "r8_EFkOTkjVSIg3PqvF2BVXH4E6edJLI4g2NsDIO",
+  auth: `${process.env.AI_KEY}`,
 });
 
 const embeddingCache = new Map();
