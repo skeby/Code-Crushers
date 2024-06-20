@@ -20,6 +20,7 @@ export interface TakenExam {
   examId: string;
   course: string;
   score: number;
+  feedback?: string;
 }
 
 export type Theme = "dark" | "light" | "system";

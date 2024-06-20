@@ -8,6 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -70,6 +77,8 @@ const ExamPage = () => {
   >(objectiveQuestions[0]);
   const [currentTheoryAnswer, setCurrentTheoryAnswer] = useState("");
   const [currentObjectiveAnswer, setCurrentObjectiveAnswer] = useState("");
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [theoryResponse, setTheoryResponse] = useState<any>();
 
   // React Query Mutations/Queries
   const { mutate: postObjective, isPending: objectivePending } = useMutation({
@@ -93,7 +102,9 @@ const ExamPage = () => {
   const { mutate: postTheory, isPending: theoryPending } = useMutation({
     mutationFn: (data: AnswerTheoryRequest) =>
       apiCall(data, paths.student.answerTheory, "post"),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setTheoryResponse(data);
+      setShowFeedback(true);
       if (currentTheoryIndex < theoryQuestions.length - 1) {
         setCurrentTheoryAnswer("");
         setCurrentTheoryIndex((prev) => {
@@ -212,6 +223,34 @@ const ExamPage = () => {
           objectivePending
         }
       />
+      <Dialog open={showFeedback} onOpenChange={setShowFeedback}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Question</DialogTitle>
+            <DialogDescription>
+              {theoryResponse?.question?.question ?? "N/A"}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Score</DialogTitle>
+            <DialogDescription>
+              {theoryResponse?.score ?? "N/A"}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Theory Percentage</DialogTitle>
+            <DialogDescription>
+              {theoryResponse?.theoryPercentage ?? "N/A"}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Feedback</DialogTitle>
+            <DialogDescription>
+              {theoryResponse?.feedback ?? "N/A"}
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
       {!hasFinished ? (
         <div className="w-full flex-col text-center flex max-w-[600px] gap-y-1">
           <div className="flex items-center sm:flex-row flex-col gap-1  justify-center">

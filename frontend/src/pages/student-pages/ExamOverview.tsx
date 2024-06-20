@@ -1,3 +1,4 @@
+import HiglightedText from "@/components/HiglightedText";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import {
@@ -19,6 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { TakeExamFields, TakeExamSchema } from "@/static/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DialogDescription } from "@radix-ui/react-dialog";
+import { LightbulbIcon } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -61,6 +64,20 @@ const ExamOverview = () => {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Take an Exam</DialogTitle>
+                  <DialogDescription className="py-3 flex flex-row items-center gap-x-2 text-sm">
+                    <LightbulbIcon className="text-muted-foreground flex-shrink-0" />
+                    <div className="!m-0 leading-5 text-primary">
+                      <p>
+                        Please utilize this examId already made available for
+                        your testing purposes.
+                      </p>
+                      <div className="font-semibold flex items-center gap-x-2 mt-1.5">
+                        <HiglightedText>
+                          6672b5984ebb9d5479efe605
+                        </HiglightedText>
+                      </div>
+                    </div>
+                  </DialogDescription>
                   {/* <DialogDescription>
                     Note that the exam begins automatically immediately you
                     click the{" "}
